@@ -14,33 +14,17 @@
  *  * limitations under the License.
  */
 
-package ref
+package address
 
 import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
-	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
+	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 )
 
-// Scope Business scope definition
-type Scope struct {
-	Owner Collar `bson:"owner" json:"owner"`
-	Code  string `bson:"code" json:"code"`
-}
-
-func (m Scope) Verify() *errors.Error {
-	if err := m.Owner.Verify(); err != nil {
-		return err
-	}
-	if m.Code == strs.EMPTY {
-		return errors.Verify("require scope.code")
-	}
-	return nil
-}
-
-func (m Scope) String() string {
-	return m.Owner.String() + ":" + m.Code
-}
-
-func (m Scope) Same(other Scope) bool {
-	return m.Owner.Same(other.Owner) && m.Code == other.Code
+type Service interface {
+	AreaLoad(req AreaLoadRequest) ([]Area, load.Paging, *errors.Error)
+	ZoneLoad(req ZoneLoadRequest) ([]Zone, load.Paging, *errors.Error)
+	AddrRegister(req AddrRegisterRequest) (*Address, *errors.Error)
+	AddrLoad(req AddrLoadRequest) ([]Area, load.Paging, *errors.Error)
+	AddrSet(req AddrSetRequest) *errors.Error
 }

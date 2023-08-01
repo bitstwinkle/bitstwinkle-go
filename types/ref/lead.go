@@ -21,13 +21,13 @@ import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
 )
 
-// Scope Business scope definition
-type Scope struct {
+// Lead Business content link unique value
+type Lead struct {
 	Owner Collar `bson:"owner" json:"owner"`
 	Code  string `bson:"code" json:"code"`
 }
 
-func (m Scope) Verify() *errors.Error {
+func (m Lead) Verify() *errors.Error {
 	if err := m.Owner.Verify(); err != nil {
 		return err
 	}
@@ -37,10 +37,10 @@ func (m Scope) Verify() *errors.Error {
 	return nil
 }
 
-func (m Scope) String() string {
+func (m Lead) String() string {
 	return m.Owner.String() + ":" + m.Code
 }
 
-func (m Scope) Same(other Scope) bool {
+func (m Lead) Same(other Lead) bool {
 	return m.Owner.Same(other.Owner) && m.Code == other.Code
 }

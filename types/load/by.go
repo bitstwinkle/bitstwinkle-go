@@ -16,22 +16,24 @@
 
 package load
 
-import "bitstwinkle-go/types/errors"
+import "github.com/bitstwinkle/bitstwinkle-go/types/errors"
+
+type ByCode = string
 
 type By struct {
-	handlers map[string]func() *errors.Error
+	handlers map[ByCode]func() *errors.Error
 }
 
 func NewBy() *By {
-	return &By{handlers: make(map[string]func() *errors.Error)}
+	return &By{handlers: make(map[ByCode]func() *errors.Error)}
 }
 
-func (by *By) Register(code string, handle func() *errors.Error) *By {
+func (by *By) Register(code ByCode, handle func() *errors.Error) *By {
 	by.handlers[code] = handle
 	return by
 }
 
-func (by *By) Do(byCode string) *errors.Error {
+func (by *By) Do(byCode ByCode) *errors.Error {
 	call, ok := by.handlers[byCode]
 	if !ok {
 		return errors.Assert(byCode+".call", "nil")

@@ -17,8 +17,8 @@
 package state
 
 import (
-	"bitstwinkle-go/types/errors"
 	"fmt"
+	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 )
 
 type Code = int64

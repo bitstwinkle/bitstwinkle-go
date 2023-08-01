@@ -26,11 +26,16 @@ const MaxPagingSize = 2000
 
 const FirstPage = 1
 
+type Page struct {
+	Size    int64 `json:"page_size"` // Page Size, default 100
+	Current int64 `json:"page_no"`   // From One
+}
+
 type Paging struct {
-	Size      int64 `bson:"size" json:"size"`             // Page Size, default 100
-	Current   int64 `bson:"current" json:"current"`       // From One
-	Total     int64 `bson:"total" json:"total"`           // The Page Count
-	ItemTotal int64 `bson:"item_total" json:"item_total"` // The Item Count
+	Size      int64 `json:"page_size"`  // Page Size, default 100
+	Current   int64 `json:"page_no"`    // From One
+	Total     int64 `json:"page_total"` // The Page Count
+	ItemTotal int64 `json:"item_total"` // The Item Count
 }
 
 func (paging Paging) ToString() string {
@@ -92,4 +97,26 @@ func PagingOf(size int64, current int64) Paging {
 
 func PagingALL() Paging {
 	return PagingOf(MaxPagingSize, FirstPage)
+}
+
+type Pagination struct {
+	Paging Paging `json:"paging"`
+	Items  []any  `json:"items"`
+}
+
+func PagingWrap[T any](paging Paging, arr []*T, wrap func(m *T) any) Pagination {
+	if len(arr) == 0 {
+		return Pagination{
+			Paging: paging,
+			Items:  []any{},
+		}
+	}
+	items := make([]any, len(arr))
+	for i, m := range arr {
+		items[i] = wrap(m)
+	}
+	return Pagination{
+		Paging: paging,
+		Items:  items,
+	}
 }

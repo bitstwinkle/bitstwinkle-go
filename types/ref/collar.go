@@ -17,9 +17,9 @@
 package ref
 
 import (
-	"bitstwinkle-go/types/errors"
-	"bitstwinkle-go/types/strs"
 	"fmt"
+	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
+	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
 )
 
 type Collar struct {

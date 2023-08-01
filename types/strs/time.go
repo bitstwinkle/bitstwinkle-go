@@ -17,7 +17,7 @@
 package strs
 
 import (
-	"bitstwinkle-go/types/errors"
+	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"time"
 )
 

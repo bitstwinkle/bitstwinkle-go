@@ -16,7 +16,7 @@
 
 package math
 
-import "bitstwinkle-go/types/errors"
+import "github.com/bitstwinkle/bitstwinkle-go/types/errors"
 
 type Ratio struct {
 	Num int64 `bson:"num" json:"num"` // Numerator

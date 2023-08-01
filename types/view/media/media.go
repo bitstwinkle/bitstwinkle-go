@@ -17,10 +17,10 @@
 package media
 
 import (
-	"bitstwinkle-go/types/collections"
-	"bitstwinkle-go/types/collections/more"
-	"bitstwinkle-go/types/errors"
-	"bitstwinkle-go/types/strs"
+	"github.com/bitstwinkle/bitstwinkle-go/types/collections"
+	"github.com/bitstwinkle/bitstwinkle-go/types/collections/more"
+	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
+	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
 )
 
 type Type = string

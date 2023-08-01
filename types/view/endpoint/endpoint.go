@@ -17,8 +17,8 @@
 package endpoint
 
 import (
-	"bitstwinkle-go/types/errors"
-	"bitstwinkle-go/types/strs"
+	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
+	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
 )
 
 // Container Terminal container
