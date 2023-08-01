@@ -93,11 +93,10 @@ type UnBindPassportRequest struct {
 }
 
 type SetRequest struct {
-	Scope   ref.Scope  `json:"scope"`              //[*]所属业务域
-	UsrID   string     `json:"usr_id"`             //[*]用户ID
-	Info    more.Array `json:"info,omitempty"`     //[|]需要新增或更新的用户信息
-	RmvInfo []string   `json:"del_info,omitempty"` //[|]需要删除的用户信息
-	CtrlSet *ctrl.Set  `json:"ctrl_set,omitempty"` //控制信息
+	Scope   ref.Scope `json:"scope"`              //[*]所属业务域
+	UsrID   string    `json:"usr_id"`             //[*]用户ID
+	InfoSet *more.Set `json:"info_set,omitempty"` //[|]展示信息
+	CtrlSet *ctrl.Set `json:"ctrl_set,omitempty"` //[|]控制信息
 }
 
 type LoadRequest struct {

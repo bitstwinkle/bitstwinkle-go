@@ -18,7 +18,9 @@ package order
 
 import (
 	"github.com/bitstwinkle/bitstwinkle-go/domains/address"
+	"github.com/bitstwinkle/bitstwinkle-go/types/collections/more"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ctrl"
+	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 	"github.com/bitstwinkle/bitstwinkle-go/types/money"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
 	"github.com/bitstwinkle/bitstwinkle-go/types/state"
@@ -49,7 +51,9 @@ type Order struct {
 	MatterArray []Matter      `json:"matter_array"`           //订单关联商品事物
 	Address     *address.Area `json:"address"`                //配送地址
 	Memo        string        `json:"memo"`                   //备注信息
+	Status      state.Code    `json:"status"`                 //主状态
 	ExStatus    state.Code    `json:"ex_status"`              //各流程自定义状态
+	Info        more.More     `json:"info"`                   //更多信息数据
 	Ctrl        ctrl.Ctrl     `json:"ctrl"`                   //控制参数
 	RecordArray []Record      `json:"record_array,omitempty"` //订单变化记录
 	BirthAt     string        `json:"birth_at"`               //创建时间
@@ -73,4 +77,26 @@ type CreateRequest struct {
 		Quantity int64        `json:"quantity"` //数量
 		Amount   money.Amount `json:"amount"`   //金额
 	}
+}
+
+type GetRequest struct {
+	By      load.By `json:"by"`       //BY: order_id
+	OrderID string  `json:"order_id"` //[order_id] ID
+}
+
+type SetRequest struct {
+	OrderID string   `json:"order_id"` //Order ID
+	InfoSet more.Set `json:"info_set"` //信息数据更新
+	CtrlSet ctrl.Set `json:"ctrl_set"` //控制数据更新
+}
+
+type AdvanceRequest struct {
+	OrderID  string     `json:"order_id"`  //Order ID
+	Status   state.Code `json:"status"`    //主状态
+	ExStatus state.Code `json:"ex_status"` //自定义状态
+	Record   *struct {
+		Code    string            `json:"code"`
+		Message string            `json:"msg"`
+		Paras   map[string]string `json:"paras,omitempty"`
+	} `json:"record"` //自定义记录
 }

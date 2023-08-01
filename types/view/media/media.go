@@ -90,3 +90,8 @@ func OfArray(arr Array) (More, *errors.Error) {
 func (m More) ToArray() Array {
 	return collections.ArrayOfMap[Item](m)
 }
+
+type Set struct {
+	Newest  Array    `json:"newest"`  //新增或更新
+	Removed []string `json:"removed"` //需要移除的
+}

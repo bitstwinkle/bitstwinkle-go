@@ -85,11 +85,10 @@ type OrgGetRequest struct {
 }
 
 type OrgSetRequest struct {
-	Scope   ref.Scope  `json:"scope"`              //[*]所属域
-	OrgID   string     `json:"org_id"`             //[*]组织ID
-	Info    more.Array `json:"info,omitempty"`     //[|]需要新增或更新的信息
-	RmvInfo []string   `json:"del_info,omitempty"` //[|]需要删除的信息
-	CtrlSet *ctrl.Set  `json:"ctrl_set,omitempty"` //控制信息
+	Scope   ref.Scope `json:"scope"`              //[*]所属域
+	OrgID   string    `json:"org_id"`             //[*]组织ID
+	InfoSet *more.Set `json:"info_set,omitempty"` //[|]展示信息
+	CtrlSet *ctrl.Set `json:"ctrl_set,omitempty"` //[|]控制信息
 }
 
 type WorkerAddRequest struct {
@@ -114,13 +113,12 @@ type WorkerGetRequest struct {
 }
 
 type WorkerSetRequest struct {
-	Scope         ref.Scope  `json:"scope"`              //[*]所属域
-	Worker        string     `json:"worker"`             //[*]对应工作者ID
-	Info          more.Array `json:"info,omitempty"`     //[|]需要新增或更新的信息
-	RmvInfo       []string   `json:"del_info,omitempty"` //[|]需要删除的信息
-	Permission    []string   `json:"permission"`         //[-]需要新增或更新的权限
-	RmvPermission []string   `json:"rmv_permission"`     //[-]需要删除的权限
-	CtrlSet       *ctrl.Set  `json:"ctrl_set,omitempty"` //控制信息
+	Scope         ref.Scope `json:"scope"`              //[*]所属域
+	Worker        string    `json:"worker"`             //[*]对应工作者ID
+	InfoSet       *more.Set `json:"info_set,omitempty"` //[|]展示信息
+	Permission    []string  `json:"permission"`         //[-]需要新增或更新的权限
+	RmvPermission []string  `json:"rmv_permission"`     //[-]需要删除的权限
+	CtrlSet       *ctrl.Set `json:"ctrl_set,omitempty"` //控制信息
 }
 
 type Service interface {

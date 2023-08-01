@@ -14,13 +14,27 @@
  *  * limitations under the License.
  */
 
-package order
+package ctrl
 
-import "github.com/bitstwinkle/bitstwinkle-go/types/errors"
+import "github.com/bitstwinkle/bitstwinkle-go/types/strs"
 
-type Service interface {
-	Create(req CreateRequest) (*Order, *errors.Error)
-	Get(req GetRequest) (*Order, *errors.Error)
-	Set(req SetRequest) *errors.Error
-	Advance(req AdvanceRequest) *errors.Error
+type Boolean = bool
+
+func BooleanOf(getter func(key string) (string, bool), key string) *Boolean {
+	str, ok := getter(key)
+	if !ok || str == strs.EMPTY {
+		return nil
+	}
+	b := strs.BoolOf(str)
+	return &b
+}
+
+type String = string
+
+func StringOf(getter func(key string) (string, bool), key string) *String {
+	str, ok := getter(key)
+	if !ok || str == strs.EMPTY {
+		return nil
+	}
+	return &str
 }
