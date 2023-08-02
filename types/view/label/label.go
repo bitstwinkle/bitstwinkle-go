@@ -57,3 +57,17 @@ type Array []Label
 func (arr Array) Verify() *errors.Error {
 	return collections.VerifyArray[Label](arr)
 }
+
+type Set struct {
+	Newest  Array    `json:"newest"`  //新增或更新
+	Removed []string `json:"removed"` //需要移除的
+}
+
+func (m Set) Verify() *errors.Error {
+	if len(m.Newest) > 0 {
+		if err := m.Newest.Verify(); err != nil {
+			return err
+		}
+	}
+	return nil
+}

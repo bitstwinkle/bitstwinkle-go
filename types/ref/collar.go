@@ -56,3 +56,8 @@ func (c Collar) String() string {
 func (c Collar) Same(other Collar) bool {
 	return c.Code == other.Code && c.ID == other.ID
 }
+
+type CollarSet struct {
+	Yes   bool    `bson:"yes" json:"yes"`
+	Value *Collar `bson:"value,omitempty" json:"value,omitempty"`
+}

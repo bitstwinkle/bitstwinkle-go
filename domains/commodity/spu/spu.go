@@ -16,33 +16,78 @@
  *
  */
 
-/*
- * 杭州菩公英科技有限公司版权所有
- * 作者: 川谷
- * 时间: 2023/8/2
- * --------------------------------------
- * ******* 给生命以时光,给岁月以欢畅 ********
- * --------------------------------------
- */
-
 package spu
 
 import (
+	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/types/spec"
 	"github.com/bitstwinkle/bitstwinkle-go/types/collections/more"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ctrl"
+	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
 	"github.com/bitstwinkle/bitstwinkle-go/types/view/label"
 	"github.com/bitstwinkle/bitstwinkle-go/types/view/media"
 )
 
+type ID = string
+
 type Spu struct {
-	Scope      ref.Scope   `json:"scope"`           //所属业务域
-	CategoryID string      `json:"category_id"`     //所属类目
-	Title      string      `json:"title"`           //标题
-	Alias      []string    `json:"alias,omitempty"` //别名
-	Info       more.More   `json:"info,omitempty"`  //介绍
-	Media      media.More  `json:"media"`           //图片视频
-	Ctrl       ctrl.Ctrl   `json:"ctrl"`            //控制信息
-	Label      label.Array `json:"label"`           //标签
-	//Spec       []*spec.DefItem `json:"spec"`            //规格定义
+	Scope      ref.Scope         `json:"scope"`          //所属业务域
+	CategoryID string            `json:"category_id"`    //所属类目
+	Title      string            `json:"title"`          //标题
+	Info       more.More         `json:"info,omitempty"` //介绍
+	Media      media.More        `json:"media"`          //图片视频
+	Ctrl       ctrl.Ctrl         `json:"ctrl"`           //控制信息
+	Label      label.Array       `json:"label"`          //标签
+	Spec       []spec.Definition `json:"spec"`           //规格定义
+	BirthAt    string            `json:"birth_at"`
+	ModifiedAt string            `json:"modified_at"`
+}
+
+type CreateRequest struct {
+	IdemID     string            `json:"idem_id"`     //[*]幂等ID
+	Scope      ref.Scope         `json:"scope"`       //所属业务域
+	CategoryID string            `json:"category_id"` //所属类目
+	Title      string            `json:"title"`       //标题
+	Spec       []spec.Definition `json:"spec"`        //规格定义
+	Info       *struct {
+		Alias string     `json:"alias,omitempty"` //别名,可以设置多个别名,通过","(半角逗号)分割
+		Intro string     `json:"intro,omitempty"` //主介绍
+		More  more.Array `json:"more,omitempty"`  //更多信息内容
+	}
+	Media *struct {
+		Primary *media.Media `json:"primary,omitempty"` //主图
+		More    media.Array  `json:"more,omitempty"`    //更多图片视频
+	}
+	Label label.Array `json:"label,omitempty"` //标签
+	Ctrl  ctrl.Ctrl   `json:"ctrl"`            //控制信息
+}
+
+type SetRequest struct {
+	Scope        ref.Scope           `json:"scope"`         //所属业务域
+	SpuID        string              `json:"spu_id"`        //对应SPU ID
+	TitleSet     *ctrl.StringSet     `json:"title_set"`     //标题
+	SpecSet      *spec.DefinitionSet `json:"spec_set"`      //设置规格
+	InfoSet      *more.Set           `json:"info_set"`      //设置展示信息
+	MediaSet     *media.Set          `json:"media_set"`     //设置媒体信息
+	LabelSet     *label.Set          `json:"label_set"`     //设置标签信息
+	AvailableSet *ctrl.BooleanSet    `json:"available_set"` //是否可用设置
+	CtrlSet      *ctrl.Set           `json:"ctrl_set"`      //设置控制信息
+}
+
+type MoveRequest struct {
+	Scope      ref.Scope `json:"scope"`       //所属业务域
+	SpuID      string    `json:"spu_id"`      //对应SPU ID
+	CategoryID string    `json:"category_id"` //迁移到的类目ID
+}
+
+type GetRequest struct {
+	Scope ref.Scope `json:"scope"`  //所属业务域
+	SpuID string    `json:"spu_id"` //对应SPU ID
+}
+
+type Service interface {
+	Create(req CreateRequest) (*Spu, *errors.Error)
+	Set(req SetRequest) (*Spu, *errors.Error)
+	Move(req MoveRequest) *errors.Error
+	Get(req GetRequest) (*Spu, *errors.Error)
 }

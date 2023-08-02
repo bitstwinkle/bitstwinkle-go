@@ -16,25 +16,62 @@
  *
  */
 
-/*
- * 杭州菩公英科技有限公司版权所有
- * 作者: 川谷
- * 时间: 2023/8/2
- * --------------------------------------
- * ******* 给生命以时光,给岁月以欢畅 ********
- * --------------------------------------
- */
-
 package sku
 
 import (
 	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/spu"
+	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/types/spec"
+	"github.com/bitstwinkle/bitstwinkle-go/types/ctrl"
+	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
+	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
+	"time"
 )
 
+type ID = string
+
 type Sku struct {
-	Scope ref.Scope `json:"scope"`  //所属业务域
-	SpuID string    `json:"spu_id"` //[*] SPU ID
-	//Spec  []*spec.Item `json:"spec"`   //[*] 规格值
-	Spu *spu.Spu `json:"spu,omitempty"` //SPU DETAIL
+	Scope      ref.Scope   `bson:"scope" json:"scope"`                 //所属业务域
+	SpuID      spu.ID      `bson:"spu_id" json:"spu_id"`               //SPU ID
+	Spec       []spec.Spec `bson:"spec" json:"spec"`                   //规格信息
+	Ctrl       *ctrl.Ctrl  `bson:"ctrl" json:"ctrl,omitempty"`         //控制信息
+	BirthAt    time.Time   `bson:"birth_at" json:"birth_at"`           //创建时间
+	ModifiedAt time.Time   `bson:"modified_at" json:"modified_at"`     //最后更新时间
+	Spu        *spu.Spu    `bson:"spu,omitempty" json:"spu,omitempty"` //SPU DETAIL
+}
+
+type CreateRequest struct {
+	Scope ref.Scope    `bson:"scope" json:"scope"`   //所属业务域
+	SpuID spu.ID       `bson:"spu_id" json:"spu_id"` //SPU ID
+	Spec  []spec.Value `bson:"spec" json:"spec"`     //规格定义
+	Ctrl  *ctrl.Ctrl   `bson:"ctrl" json:"ctrl"`     //控制信息
+}
+
+type SetRequest struct {
+	Scope        ref.Scope        `bson:"scope" json:"scope"`                 //所属业务域
+	SkuID        ID               `bson:"sku_id" json:"sku_id"`               //SKU ID
+	SpecSet      *spec.Set        `bson:"spec_set" json:"spec_set"`           //规格定义
+	AvailableSet *ctrl.BooleanSet `bson:"available_set" json:"available_set"` //是否可用
+	CtrlSet      *ctrl.Set        `bson:"ctrl_set" json:"ctrl_set"`           //控制信息
+}
+
+type GetRequest struct {
+	By    load.By      `bson:"by" json:"by"`         //BY: sku_id|spu_id
+	Scope ref.Scope    `bson:"scope" json:"scope"`   //[*]所属业务域
+	SkuID ID           `bson:"sku_id" json:"sku_id"` //[sku_id]对应SkU ID
+	SpuID spu.ID       `bson:"spu_id" json:"spu_id"` //[spu_id]对应SPU ID
+	Spec  []spec.Value `bson:"spec" json:"spec"`     //[spu_id]SPEC
+}
+
+type LoadRequest struct {
+	SpuIDArray []string         `bson:"spu_id_array" json:"spu_id_array"` //SPU ID
+	WithSpu    *ctrl.BooleanSet `bson:"with_spu" json:"with_spu"`         //是否携带SPU信息
+	Page       *load.Page       `bson:"page" json:"page"`                 //分页信息
+}
+
+type Service interface {
+	Create(req CreateRequest) (*Sku, *errors.Error)
+	Set(req SetRequest) (*Sku, *errors.Error)
+	Get(req GetRequest) (*Sku, *errors.Error)
+	Load(req LoadRequest) ([]Sku, load.Paging, *errors.Error)
 }

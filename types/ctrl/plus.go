@@ -16,25 +16,24 @@
 
 package ctrl
 
-import "github.com/bitstwinkle/bitstwinkle-go/types/strs"
-
-type Boolean = bool
-
-func BooleanOf(getter func(key string) (string, bool), key string) *Boolean {
-	str, ok := getter(key)
-	if !ok || str == strs.EMPTY {
-		return nil
-	}
-	b := strs.BoolOf(str)
-	return &b
+type BooleanSet struct {
+	Yes   bool `bson:"yes" json:"yes"` //是否设置
+	Value bool `json:"value"`          //对应值
 }
 
-type String = string
-
-func StringOf(getter func(key string) (string, bool), key string) *String {
-	str, ok := getter(key)
-	if !ok || str == strs.EMPTY {
-		return nil
-	}
-	return &str
+type Int64Set struct {
+	Yes   bool  `bson:"yes" json:"yes"` //是否设置
+	Value int64 `json:"value"`          //对应值
 }
+
+type StringSet struct {
+	Yes   bool   `bson:"yes" json:"yes"` //是否设置
+	Value string `json:"value"`          //对应值
+}
+
+type StringArraySet struct {
+	Yes   bool     `bson:"yes" json:"yes"`
+	Value []string `bson:"value" json:"value"`
+}
+
+type TagSet = StringArraySet

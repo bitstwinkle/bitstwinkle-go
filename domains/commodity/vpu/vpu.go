@@ -16,13 +16,39 @@
  *
  */
 
-/*
- * 杭州菩公英科技有限公司版权所有
- * 作者: 川谷
- * 时间: 2023/8/2
- * --------------------------------------
- * ******* 给生命以时光,给岁月以欢畅 ********
- * --------------------------------------
- */
-
 package vpu
+
+import (
+	"github.com/bitstwinkle/bitstwinkle-go/domains/category"
+	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/spu"
+	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/types/spec"
+	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/vku"
+	"github.com/bitstwinkle/bitstwinkle-go/types/collections/more"
+	"github.com/bitstwinkle/bitstwinkle-go/types/ctrl"
+	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
+	"github.com/bitstwinkle/bitstwinkle-go/types/view/label"
+	"github.com/bitstwinkle/bitstwinkle-go/types/view/media"
+	"time"
+)
+
+type ID = spu.ID
+
+type Vpu struct {
+	VN         string            `bson:"vn" json:"vn"`                   //所属价值网络
+	Scope      ref.Scope         `bson:"scope" json:"scope"`             //所属业务域
+	Category   category.Category `bson:"category_id" json:"category_id"` //所属类目
+	ID         ID                `bson:"id" json:"id"`                   //VPU ID
+	Title      string            `bson:"title" json:"title"`             //标题
+	Info       more.More         `json:"info,omitempty"`                 //介绍
+	Media      media.More        `json:"media"`                          //图片视频
+	Ctrl       ctrl.Ctrl         `json:"ctrl"`                           //控制信息
+	Label      label.Array       `json:"label"`                          //标签
+	Spec       []spec.Definition `json:"spec"`                           //规格定义
+	BirthAt    time.Time         `json:"birth_at"`                       //创建时间
+	ModifiedAt time.Time         `json:"modified_at"`                    //最后修改时间
+
+	SpuID          spu.ID          `json:"spu_id"`
+	ExMedia        media.More      `json:"ex_media"`        //更多图片视频
+	SpecDefinition spec.Definition `json:"spec_definition"` //规格定义
+	Commodities    []vku.Vku       `json:"commodities"`     //商品集
+}

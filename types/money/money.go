@@ -47,3 +47,8 @@ func CNY(amount Amount) Money {
 		Amount:   amount,
 	}
 }
+
+type AmountSet struct {
+	Yes   bool   `bson:"yes" json:"yes"`     //是否设置
+	Value Amount `bson:"value" json:"value"` //设置的金额
+}

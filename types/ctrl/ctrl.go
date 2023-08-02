@@ -23,8 +23,8 @@ type Para struct {
 
 // Ctrl 数据控制器,用于给数据进行控制打标或者设置参数
 type Ctrl struct {
-	Tags  []string `bson:"tags" json:"tags"`
-	Paras []Para   `bson:"paras" json:"paras"`
+	Tags  []string `bson:"tags,omitempty" json:"tags,omitempty"`
+	Paras []Para   `bson:"paras,omitempty" json:"paras,omitempty"`
 }
 
 func New() *Ctrl {
@@ -62,6 +62,7 @@ func (c *Ctrl) WithPara(key string, value string) *Ctrl {
 }
 
 type Set struct {
+	Set      bool     `json:"set"`                     //是否设置
 	AddTag   []string `json:"add_ctrl_tag,omitempty"`  //[|]控制标中需要新增的标
 	RmvTag   []string `json:"rmv_ctrl_tag,omitempty"`  //[|]控制标中需要删除的标
 	CtrlPara []Para   `json:"ctrl_para,omitempty"`     //[|]控制参数中需要新增或者更新的参数
