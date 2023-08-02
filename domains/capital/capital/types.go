@@ -13,16 +13,10 @@
  *  *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  *  * See the License for the specific language governing permissions and
  *  *  * limitations under the License.
- *
+
  */
 
-package vku
+package capital
 
-type ID = string
-
-//func IDOf(VmcID vmc.ID, vwhID vwh.ID, skuID sku.ID) string {
-//
-//}
-
-type Vku struct {
-}
+// Channel 资金通道
+type Channel = string

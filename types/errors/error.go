@@ -46,29 +46,22 @@ func Of(t Type, code string, message string, nativeErr ...error) *Error {
 	return err
 }
 
-func Assert(expect string, actual string) *Error {
-	return &Error{
-		Type:    Coding,
-		Code:    "coding",
-		Message: fmt.Sprintf("assert failed, expect: %s, but %s", expect, actual),
-	}
+func Assert(expect string, actual string, nativeErr ...error) *Error {
+	return Of(Coding,
+		"assert",
+		fmt.Sprintf("assert failed, expect: %s, but %s", expect, actual),
+		nativeErr...)
 }
 
-func Sys(code string, message string, nativeErr error) *Error {
-	return &Error{
-		Type:    System,
-		Code:    code,
-		Message: message,
-		_err:    nativeErr,
-	}
+func Sys(code string, message string, nativeErr ...error) *Error {
+	return Of(System,
+		code,
+		message,
+		nativeErr...)
 }
 
-func Verify(message string) *Error {
-	return &Error{
-		Type:    Application,
-		Code:    "verify",
-		Message: message,
-	}
+func Verify(message string, nativeErr ...error) *Error {
+	return Of(Application, "verify", message, nativeErr...)
 }
 
 func (e *Error) Error() string {

@@ -104,7 +104,7 @@ type LoadRequest struct {
 	Page      load.Page        `bson:"page" json:"page"`           //分页信息
 }
 
-type SetItemRequest struct {
+type ItemSetRequest struct {
 	IdemID       string    `bson:"idem_id" json:"idem_id"` //[*]幂等ID
 	Scope        ref.Scope `bson:"scope" json:"scope"`     //所属业务域
 	VwhID        string    `bson:"vwh_id" json:"vwh_id"`   //对应ID
@@ -122,14 +122,14 @@ type SetItemRequest struct {
 	CtrlSet           *ctrl.Ctrl       `bson:"ctrl_set,omitempty" json:"ctrl_set,omitempty"`                   //控制信息
 }
 
-type GetItemRequest struct {
+type ItemGetRequest struct {
 	By    load.By   `bson:"by" json:"by"`         //BY:item_key[*]
 	Scope ref.Scope `bson:"scope" json:"scope"`   //所属业务域
 	VwhID string    `bson:"vwh_id" json:"vwh_id"` //对应ID
 	SkuID string    `bson:"sku_id" json:"sku_id"` //对应SKU ID
 }
 
-type LoadItemRequest struct {
+type ItemLoadRequest struct {
 	Scope         ref.Scope `bson:"scope" json:"scope"`                   //所属业务域
 	VwhIDArray    []string  `bson:"vwh_id_array" json:"vwh_id_array"`     //对应VWH ID
 	SpuIDArray    []string  `bson:"spu_id_array" json:"spu_id_array"`     //对应SKU ID
@@ -141,7 +141,7 @@ type Service interface {
 	Create(req CreateRequest) (*Vwh, *errors.Error)
 	Set(req SetRequest) (*Vwh, *errors.Error)
 	Get(req GetRequest) (*Vwh, *errors.Error)
-	SetItem(req SetItemRequest) (*Item, *errors.Error)
-	GetItem(req GetItemRequest) (*Item, *errors.Error)
-	LoadItem(req LoadItemRequest) ([]Item, load.Paging, *errors.Error)
+	ItemSet(req ItemSetRequest) (*Item, *errors.Error)
+	ItemGet(req ItemGetRequest) (*Item, *errors.Error)
+	ItemLoad(req ItemLoadRequest) ([]Item, load.Paging, *errors.Error)
 }

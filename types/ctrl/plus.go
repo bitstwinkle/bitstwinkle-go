@@ -26,6 +26,11 @@ type Int64Set struct {
 	Value int64 `json:"value"`          //对应值
 }
 
+type IntSet struct {
+	Yes   bool `bson:"yes" json:"yes"` //是否设置
+	Value int  `json:"value"`          //对应值
+}
+
 type StringSet struct {
 	Yes   bool   `bson:"yes" json:"yes"` //是否设置
 	Value string `json:"value"`          //对应值

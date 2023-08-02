@@ -16,28 +16,28 @@
  *
  */
 
-package vpu
+package commodities
 
 import (
 	"github.com/bitstwinkle/bitstwinkle-go/domains/category"
 	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/spu"
 	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/types/spec"
-	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/vku"
+	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/vmc"
+	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/vwh"
 	"github.com/bitstwinkle/bitstwinkle-go/types/collections/more"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ctrl"
+	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
 	"github.com/bitstwinkle/bitstwinkle-go/types/view/label"
 	"github.com/bitstwinkle/bitstwinkle-go/types/view/media"
 	"time"
 )
 
-type ID = spu.ID
-
 type Vpu struct {
 	VN         string            `bson:"vn" json:"vn"`                   //所属价值网络
 	Scope      ref.Scope         `bson:"scope" json:"scope"`             //所属业务域
 	Category   category.Category `bson:"category_id" json:"category_id"` //所属类目
-	ID         ID                `bson:"id" json:"id"`                   //VPU ID
+	VpuID      VpuID             `bson:"vpu_id" json:"vpu_id"`           //VPU ID
 	Title      string            `bson:"title" json:"title"`             //标题
 	Info       more.More         `json:"info,omitempty"`                 //介绍
 	Media      media.More        `json:"media"`                          //图片视频
@@ -47,8 +47,20 @@ type Vpu struct {
 	BirthAt    time.Time         `json:"birth_at"`                       //创建时间
 	ModifiedAt time.Time         `json:"modified_at"`                    //最后修改时间
 
-	SpuID          spu.ID          `json:"spu_id"`
-	ExMedia        media.More      `json:"ex_media"`        //更多图片视频
-	SpecDefinition spec.Definition `json:"spec_definition"` //规格定义
-	Commodities    []vku.Vku       `json:"commodities"`     //商品集
+	Related struct {
+		VmcID vmc.ID `bson:"vmc_id" json:"vmc_id"`
+		VwhID vwh.ID `bson:"vwh_id" json:"vwh_id"`
+		SpuID spu.ID `bson:"spu_id" json:"spu_id"`
+	} `bson:"related" json:"related"`
+	Commodities []Vku `json:"commodities"` //商品集
+}
+
+type VpuLoadRequest struct {
+	Scope      ref.Scope  `bson:"scope" json:"scope"`               //所属业务域
+	VwhIDArray []vwh.ID   `bson:"vwh_id_array" json:"vwh_id_array"` //虚拟商品库ID
+	VmcIDArray []vmc.ID   `bson:"vmc_id_array" json:"vmc_id_array"` //销售渠道ID
+	Keyword    string     `bson:"keyword" json:"keyword"`           //关键词
+	Page       *load.Page `bson:"page" json:"page"`                 //分页信息
+
+	WithCommodities *ctrl.BooleanSet `bson:"with_commodities" json:"with_commodities"` //是否加载商品集
 }
