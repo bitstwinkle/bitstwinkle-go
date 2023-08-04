@@ -48,7 +48,7 @@ func TimeTo(t time.Time) string {
 	return t.Format(TimeLayout)
 }
 
-func DtTo(t time.Time) string {
+func DateTo(t time.Time) string {
 	return t.Format(DtLayout)
 }
 

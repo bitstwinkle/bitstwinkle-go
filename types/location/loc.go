@@ -44,20 +44,31 @@ func LocOf(lon float64, lat float64) Loc {
 	}
 }
 
-type LocItem struct {
+type Item struct {
 	Code string `bson:"code" json:"code"`
 	Seq  int    `bson:"seq" json:"seq"`
 	Loc  Loc    `bson:"loc" json:"loc"`
 }
 
-func (m LocItem) GetCode() string {
+func (m Item) GetCode() string {
 	return m.Code
 }
 
-func (m LocItem) GetSeq() int {
+func (m Item) GetSeq() int {
 	return m.Seq
 }
 
-func (m LocItem) Verify() *errors.Error {
+func (m Item) Verify() *errors.Error {
 	return m.Loc.Verify()
+}
+
+type Set struct {
+	Yes bool `bson:"yes" json:"yes"`
+	Loc *Loc `bson:"loc" json:"loc"`
+}
+
+type ExLocSet struct {
+	Yes     bool     `bson:"yes" json:"yes"`
+	ExLoc   []Item   `bson:"exLoc" json:"exLoc"`     //新增或者更新的
+	Removed []string `bson:"removed" json:"removed"` //需要删除的
 }

@@ -17,6 +17,7 @@
 package ref
 
 import (
+	"github.com/bitstwinkle/bitstwinkle-go/tools/unique"
 	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
 )
@@ -25,6 +26,32 @@ import (
 type Lead struct {
 	Owner Collar `bson:"owner" json:"owner"`
 	Code  string `bson:"code" json:"code"`
+}
+
+const JustOne = "_uk_"
+
+// LeadOfOneToOne 一个OWNER下只有一个
+func LeadOfOneToOne(owner Collar) Lead {
+	return Lead{
+		Owner: owner,
+		Code:  JustOne,
+	}
+}
+
+// LeadOfOneToMany 一个OWNER下会有多个
+func LeadOfOneToMany(owner Collar, prefix string) Lead {
+	return Lead{
+		Owner: owner,
+		Code:  prefix + "_" + unique.ID(),
+	}
+}
+
+func (m Lead) IsOneToOne() bool {
+	return m.Code == JustOne
+}
+
+func (m Lead) IsOneToMany() bool {
+	return m.Code != JustOne
 }
 
 func (m Lead) Verify() *errors.Error {

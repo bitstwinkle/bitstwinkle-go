@@ -53,9 +53,9 @@ func Assert(expect string, actual string, nativeErr ...error) *Error {
 		nativeErr...)
 }
 
-func Sys(code string, message string, nativeErr ...error) *Error {
+func Sys(message string, nativeErr ...error) *Error {
 	return Of(System,
-		code,
+		"sys",
 		message,
 		nativeErr...)
 }

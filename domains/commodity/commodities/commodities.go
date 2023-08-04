@@ -19,6 +19,7 @@
 package commodities
 
 import (
+	"github.com/bitstwinkle/bitstwinkle-go/domains/category"
 	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/types/inventory"
 	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/types/spec"
 	"github.com/bitstwinkle/bitstwinkle-go/domains/commodity/types/volume"
@@ -35,22 +36,22 @@ import (
 type CreateRequest struct {
 	IdemID     string            `bson:"idem_id" json:"idem_id"`         //[*]幂等ID
 	Scope      ref.Scope         `bson:"scope" json:"scope"`             //所属业务域
-	CategoryID string            `bson:"category_id" json:"category_id"` //所属类目
+	CategoryID category.ID       `bson:"category_id" json:"category_id"` //所属类目
 	Title      string            `bson:"title" json:"title"`             //标题
 	Spec       []spec.Definition `bson:"spec" json:"spec"`               //规格定义
 	Info       *struct {
-		Alias string     `bson:"alias" json:"alias"`         //别名,可以设置多个别名,通过","(半角逗号)分割
-		Intro string     `bson:"intro" json:"intro"`         //主介绍
-		More  more.Array `bson:"more" json:"more,omitempty"` //更多信息内容
-	} `bson:"info,omitempty" json:"info,omitempty"`
+		Alias string     `bson:"alias" json:"alias"` //别名,可以设置多个别名,通过","(半角逗号)分割
+		Intro string     `bson:"intro" json:"intro"` //主介绍
+		More  more.Array `bson:"more" json:"more"`   //更多信息内容
+	} `bson:"info" json:"info"`
 	Media *struct {
-		Primary *media.Media `bson:"primary" json:"primary,omitempty"` //主图
-		More    media.Array  `bson:"more" json:"more,omitempty"`       //更多图片视频
+		Primary *media.Media `bson:"primary" json:"primary"` //主图
+		More    media.Array  `bson:"more" json:"more"`       //更多图片视频
 	} `bson:"media,omitempty" json:"media,omitempty"`
-	Label       label.Array `bson:"label" json:"label,omitempty"` //标签
-	Ctrl        ctrl.Ctrl   `bson:"ctrl" json:"ctrl"`             //控制信息
-	VwhLead     ref.Lead    `bson:"vwh_lead" json:"vwhLead"`      //商品库领衔信息
-	VmcLead     ref.Lead    `bson:"vmc_lead" json:"vmc_lead"`     //销售区领衔信息
+	Label       label.Array `bson:"label" json:"label"`       //标签
+	Ctrl        ctrl.Ctrl   `bson:"ctrl" json:"ctrl"`         //控制信息
+	VwhLead     *ref.Lead   `bson:"vwh_lead" json:"vwhLead"`  //商品库领衔信息
+	VmcLead     *ref.Lead   `bson:"vmc_lead" json:"vmc_lead"` //销售区领衔信息
 	Commodities []struct {
 		Spec           []spec.Value        `bson:"spec" json:"spec"`                       //规格定义
 		Inventory      inventory.Inventory `bson:"inventory" json:"inventory"`             //库存信息

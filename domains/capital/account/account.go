@@ -76,8 +76,8 @@ type Bill struct {
 }
 
 type CreateRequest struct {
-	Scope       ref.Scope       `bson:"scope" json:"scope"`             //[*]所属业务域
-	Lead        ref.Lead        `bson:"lead" json:"lead"`               //[*]业务唯一KEY
+	Scope       *ref.Scope      `bson:"scope" json:"scope"`             //[*]所属业务域
+	Lead        *ref.Lead       `bson:"lead" json:"lead"`               //[*]业务唯一KEY
 	Title       string          `bson:"title" json:"title"`             //[*]名称备注
 	Channel     capital.Channel `bson:"channel" json:"channel"`         //[*]对应支付通道
 	Certificate Certificate     `bson:"certificate" json:"certificate"` //[*]凭证信息

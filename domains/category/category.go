@@ -25,10 +25,23 @@ import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/view/media"
 )
 
+const Ref = "CATEGORY"
+
+type ID = string
+
+func GetCollar(categoryID ID) ref.Collar {
+	return ref.Collar{
+		Code: Ref,
+		ID:   categoryID,
+	}
+}
+
+const ROOT ID = "$"
+
 type Category struct {
 	Scope ref.Scope `json:"scope"` //所属业务域
 	Lead  ref.Lead  `json:"lead"`  //业务链接: 唯一
-	ID    string    `json:"id"`    //抽象类目ID
+	ID    ID        `json:"id"`    //抽象类目ID
 	Tree  struct {
 		Stair  int      `json:"stair"`  //所属层级
 		Parent string   `json:"parent"` //父亲ID
@@ -44,46 +57,46 @@ type Category struct {
 }
 
 type CreateRequest struct {
-	IdemID   string    `json:"idem_id"`   //[*]幂等ID
-	Scope    ref.Scope `json:"scope"`     //所属业务域
-	Lead     ref.Lead  `json:"lead"`      //业务链接: 唯一
-	ParentID string    `json:"parent_id"` //父抽象类目ID,顶层使用$
-	Name     string    `json:"name"`      //类目名称
+	IdemID   string    `bson:"idem_id" json:"idem_id"`     //[*]幂等ID
+	Scope    ref.Scope `bson:"scope" json:"scope"`         //所属业务域
+	Lead     *ref.Lead `bson:"lead" json:"lead"`           //业务链接: 唯一
+	ParentID ID        `bson:"parent_id" json:"parent_id"` //父抽象类目ID,顶层使用$
+	Name     string    `bson:"name" json:"name"`           //类目名称
 	Info     *struct {
-		Alias string     `json:"alias"` //[-]别名
-		Code  string     `json:"code"`  //[-]编码
-		More  more.Array `json:"more"`  //更多信息
-	} `json:"info"` //展示信息
+		Alias string     `bson:"alias" json:"alias"` //[-]别名
+		Code  string     `bson:"code" json:"code"`   //[-]编码
+		More  more.Array `bson:"more" json:"more"`   //更多信息
+	} `bson:"info" json:"info"` //展示信息
 	Media *struct {
-		Logo    *media.Media `json:"logo,omitempty"`    //LOGO
-		Primary *media.Media `json:"primary,omitempty"` //主图视频
-		More    more.Array   `json:"more"`              //更多图视频
+		Logo    *media.Media `bson:"logo" json:"logo"`       //LOGO
+		Primary *media.Media `bson:"primary" json:"primary"` //主图视频
+		More    more.Array   `bson:"more" json:"more"`       //更多图视频
 	} `json:"media"` //图文视频
-	Ctrl ctrl.Ctrl `json:"ctrl"` //控制信息
-	Seq  int64     `json:"seq"`  //在上级类目中的排序
+	Ctrl *ctrl.Ctrl `bson:"ctrl" json:"ctrl"` //控制信息
+	Seq  int64      `bson:"seq" json:"seq"`   //在上级类目中的排序
 }
 
 type SetRequest struct {
-	IdemID    string        `json:"idem_id"`             //[*]幂等ID
-	BrandID   string        `json:"brand_id"`            //[*]ID
-	Available *ctrl.Boolean `json:"available,omitempty"` //[-]是否可用设置
-	MediaSet  *media.Set    `json:"media_set,omitempty"` //[-]MEDIA SET
-	InfoSet   *more.Set     `json:"info_set,omitempty"`  //[-]INFO SET
-	CtrlSet   *ctrl.Set     `json:"ctrl_set,omitempty"`  //[-]CTRL SET
+	IdemID       string           `bson:"idem_id" json:"idem_id"`             //[*]幂等ID
+	CategoryID   ID               `bson:"category_id" json:"category_id"`     //[*]ID
+	AvailableSet *ctrl.BooleanSet `bson:"available_set" json:"available_set"` //[-]是否可用设置
+	MediaSet     *media.Set       `bson:"media_set" json:"media_set"`         //[-]MEDIA SET
+	InfoSet      *more.Set        `bson:"info_set" json:"info_set"`           //[-]INFO SET
+	CtrlSet      *ctrl.Set        `bson:"ctrl_set" json:"ctrl_set"`           //[-]CTRL SET
 }
 
 type GetRequest struct {
 	By         load.By   `json:"by"`          //BY: category_id|lead
-	CategoryID string    `json:"category_id"` //[category_id]
-	Lead       *ref.Lead `json:"category_id"` //[lead]
+	CategoryID ID        `json:"category_id"` //[category_id]
+	Lead       *ref.Lead `json:"lead"`        //[lead]
 }
 
 type LoadRequest struct {
-	Scope     ref.Scope     `json:"scope"`               //[*]所属业务域
-	CtrlTag   []string      `json:"ctrl_tag,omitempty"`  //控制标
-	Available *ctrl.Boolean `json:"available,omitempty"` //是否只返回有效,默认true
-	Keyword   *ctrl.String  `json:"keyword,omitempty"`   //关键词信息
-	Page      load.Page     `json:"page"`                //分页信息
+	Scope     ref.Scope        `json:"scope"`               //[*]所属业务域
+	CtrlTag   []string         `json:"ctrl_tag,omitempty"`  //控制标
+	Available *ctrl.BooleanSet `json:"available,omitempty"` //是否只返回有效,默认true
+	Keyword   *ctrl.StringSet  `json:"keyword,omitempty"`   //关键词信息
+	Page      load.Page        `json:"page"`                //分页信息
 }
 
 type Service interface {
