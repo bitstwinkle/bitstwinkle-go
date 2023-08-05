@@ -16,7 +16,7 @@
 
  */
 
-package rest
+package security
 
 import (
 	"fmt"
@@ -33,27 +33,26 @@ import (
 )
 
 const (
-	HeaderPrefix    = "Twinkle-" //统一前缀
-	HeaderTokenPub  = HeaderPrefix + "Token-Pub"
-	HeaderNonce     = HeaderPrefix + "Nonce"     //Nonce
-	HeaderTimestamp = HeaderPrefix + "Timestamp" //时间戳
-	HeaderSignature = HeaderPrefix + "Signature" //签名
+	Security            = "security"
+	Turn                = "turn"
+	Auth                = "auth"
+	RefreshTokenPub     = "refresh_token_pub"
+	RefreshTokenPubSign = "refresh_token_pub_sign"
+	HeaderPrefix        = "Twinkle-"                  //Uniform prefix
+	HeaderTokenPub      = HeaderPrefix + "Token-Pub"  //Public
+	HeaderNonce         = HeaderPrefix + "Nonce"      //Nonce
+	HeaderTimestamp     = HeaderPrefix + "Timestamp"  //Timestamp
+	HeaderSignature     = HeaderPrefix + "Signature"  //Signature
+	HeaderTokenExpire   = HeaderPrefix + "Expiration" //Token Expiration
 )
-
-type Token struct {
-	VN           string `bson:"vn" json:"vn"`
-	JD           string `bson:"jd" json:"jd"`
-	TokenPri     string `bson:"token_pri" json:"token_pri"`
-	TokenPub     string `bson:"token_pub" json:"token_pub"`
-	RefreshToken string `bson:"refresh_token" json:"refresh_token"`
-}
 
 var signWithHeaderKey = []string{HeaderNonce, HeaderTimestamp, HeaderTokenPub}
 
 // Signature 按照协议签名
-func Signature(req *http.Request, tokenPri string) *errors.Error {
+func Signature(req *http.Request, tokenPub string, tokenPri string) *errors.Error {
 	nonce := unique.Rand()
 	timestamp := time.Now().Unix()
+	req.Header.Set(HeaderTokenPub, tokenPub)
 	req.Header.Set(HeaderNonce, nonce)
 	req.Header.Set(HeaderTimestamp, fmt.Sprintf("%d", timestamp))
 	signStr, err := GenSignature(req, tokenPri)
