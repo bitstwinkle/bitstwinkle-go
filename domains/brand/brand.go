@@ -54,25 +54,25 @@ type RegisterRequest struct {
 }
 
 type SetRequest struct {
-	IdemID    string        `json:"idem_id"`             //[*]幂等ID
-	BrandID   string        `json:"brand_id"`            //[*]品牌ID
-	Available *ctrl.Boolean `json:"available,omitempty"` //[-]是否可用设置
-	MediaSet  *media.Set    `json:"media_set,omitempty"` //[-]MEDIA SET
-	InfoSet   *more.Set     `json:"info_set,omitempty"`  //[-]INFO SET
-	CtrlSet   *ctrl.Set     `json:"ctrl_set,omitempty"`  //[-]CTRL SET
+	IdemID    string           `json:"idem_id"`             //[*]幂等ID
+	BrandID   string           `json:"brand_id"`            //[*]品牌ID
+	Available *ctrl.BooleanSet `json:"available,omitempty"` //[-]是否可用设置
+	MediaSet  *media.Set       `json:"media_set,omitempty"` //[-]MEDIA SET
+	InfoSet   *more.Set        `json:"info_set,omitempty"`  //[-]INFO SET
+	CtrlSet   *ctrl.Set        `json:"ctrl_set,omitempty"`  //[-]CTRL SET
 }
 
 type GetRequest struct {
-	By      load.By `json:"by"`       //BY: brand_id[*]
-	BrandID string  `json:"brand_id"` //[brand_id]
+	By      load.ByCode `json:"by"`       //BY: brand_id[*]
+	BrandID string      `json:"brand_id"` //[brand_id]
 }
 
 type LoadRequest struct {
-	Scope     ref.Scope     `json:"scope"`               //[*]所属业务域
-	CtrlTag   []string      `json:"ctrl_tag,omitempty"`  //控制标
-	Available *ctrl.Boolean `json:"available,omitempty"` //是否只返回有效,默认true
-	Keyword   *ctrl.String  `json:"keyword,omitempty"`   //关键词信息
-	Page      load.Page     `json:"page"`                //分页信息
+	Scope     ref.Scope        `json:"scope"`               //[*]所属业务域
+	CtrlTag   []string         `json:"ctrl_tag,omitempty"`  //控制标
+	Available *ctrl.BooleanSet `json:"available,omitempty"` //是否只返回有效,默认true
+	Keyword   *ctrl.StringSet  `json:"keyword,omitempty"`   //关键词信息
+	Page      *load.Page       `json:"page"`                //分页信息
 }
 
 type Service interface {
@@ -80,5 +80,5 @@ type Service interface {
 	Get(req GetRequest) (*Brand, *errors.Error)
 	Set(req SetRequest) (*Brand, *errors.Error)
 	Remove(brandID string) *errors.Error
-	Load(req LoadRequest) ([]*Brand, load.Paging, *errors.Error)
+	Load(req LoadRequest) ([]*Brand, *load.Paging, *errors.Error)
 }
