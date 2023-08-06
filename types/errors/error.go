@@ -31,7 +31,7 @@ type Error struct {
 	Code    string `bson:"code"  json:"code"`
 	Message string `bson:"message" json:"message"`
 
-	_err error // Native error
+	Err error `bson:"-" json:"-"` // Native error
 }
 
 func Of(t Type, code string, message string, nativeErr ...error) *Error {
@@ -40,8 +40,8 @@ func Of(t Type, code string, message string, nativeErr ...error) *Error {
 		Code:    code,
 		Message: message,
 	}
-	if len(nativeErr) > 0 {
-		err._err = nativeErr[0]
+	if len(nativeErr) > 0 && nativeErr[0] != nil {
+		err.Err = nativeErr[0]
 	}
 	return err
 }
@@ -65,8 +65,8 @@ func Verify(message string, nativeErr ...error) *Error {
 }
 
 func (e *Error) Error() string {
-	if e._err != nil {
-		return fmt.Sprintf("[%s] %s. ******** %s ********", e.Code, e.Message, e._err.Error())
+	if e.Err != nil && e.Err != e {
+		return fmt.Sprintf("[%s] %s. ******** %s ********", e.Code, e.Message, e.Err.Error())
 	}
 	return fmt.Sprintf("[%s] %s", e.Code, e.Message)
 }
@@ -84,5 +84,5 @@ func (e *Error) IsSystem() bool {
 }
 
 func (e *Error) Native() error {
-	return e._err
+	return e.Err
 }
