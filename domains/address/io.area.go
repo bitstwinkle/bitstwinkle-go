@@ -20,6 +20,7 @@ import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 	"github.com/bitstwinkle/bitstwinkle-go/types/location"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
+	"time"
 )
 
 type Area struct {
@@ -35,8 +36,8 @@ type Area struct {
 	Path       []Area                  `json:"path"`             //全路径
 	Loc        *location.Loc           `json:"loc,omitempty"`    //坐标信息
 	ExLoc      map[string]location.Loc `json:"ex_loc,omitempty"` //扩展坐标信息
-	BirthAt    string                  `json:"birth_at"`         //创建时间
-	ModifiedAt string                  `json:"modified_at"`      //最后更新时间
+	BirthAt    time.Time               `json:"birth_at"`         //创建时间
+	ModifiedAt time.Time               `json:"modified_at"`      //最后更新时间
 }
 
 type AreaLoadRequest struct {
