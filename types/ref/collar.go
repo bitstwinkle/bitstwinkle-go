@@ -27,6 +27,10 @@ type Collar struct {
 	ID   string `bson:"id" json:"id"`
 }
 
+type Loader interface {
+	Get(collar *Collar) (*Ref, *errors.Error)
+}
+
 func (c Collar) Verify(code ...string) *errors.Error {
 	if c.Code == strs.EMPTY {
 		return errors.Verify("require code")
