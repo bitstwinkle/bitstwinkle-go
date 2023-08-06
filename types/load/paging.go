@@ -77,6 +77,13 @@ func (paging Paging) Limit() int64 {
 	return paging.Size
 }
 
+func PagingOfPage(page *Page) Paging {
+	if page == nil {
+		return PagingOf(DefaultPagingSize, FirstPage)
+	}
+	return PagingOf(page.Size, page.Current)
+}
+
 func PagingOf(size int64, current int64) Paging {
 	if size <= 0 {
 		size = DefaultPagingSize
