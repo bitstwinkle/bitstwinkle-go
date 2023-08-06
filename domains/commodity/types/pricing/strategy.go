@@ -58,8 +58,8 @@ func (s Strategy) Verify() *errors.Error {
 		return errors.Verify("invalid method: " + s.Method)
 	}
 	if s.Fitting != nil && s.Fitting.Yes {
-		if s.Fitting.Amount <= 0 || s.Fitting.Amount >= 10 {
-			return errors.Verify(fmt.Sprintf("invalid fitting: <=0 || >= 10, it is %d", s.Fitting.Amount))
+		if s.Fitting.Value <= 0 || s.Fitting.Value >= 10 {
+			return errors.Verify(fmt.Sprintf("invalid fitting: <=0 || >= 10, it is %d", s.Fitting.Value))
 		}
 	}
 	return nil
@@ -87,7 +87,7 @@ func (s Strategy) fitting(price money.Amount) money.Amount {
 	if s.Fitting == nil || !s.Fitting.Yes {
 		return price
 	}
-	fit := s.Fitting.Amount
+	fit := s.Fitting.Value
 	newPrice := price
 	if newPrice%10 != fit {
 		newPrice += fit - newPrice%10
