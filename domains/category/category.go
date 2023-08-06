@@ -50,7 +50,7 @@ type Category struct {
 	Name       string     `json:"name"`        //类目名称
 	Media      media.More `json:"media"`       //更多图视频
 	Info       more.More  `json:"info"`        //更多信息
-	Ctrl       ctrl.Ctrl  `json:"ctrl"`        //控制信息
+	Ctrl       *ctrl.Ctrl `json:"ctrl"`        //控制信息
 	Seq        int64      `json:"seq"`         //在上级类目中的排序
 	BrithAt    string     `json:"brith_at"`    //创建时间
 	ModifiedAt string     `json:"modified_at"` //最后修改时间
@@ -86,9 +86,9 @@ type SetRequest struct {
 }
 
 type GetRequest struct {
-	By         load.By   `json:"by"`          //BY: category_id|lead
-	CategoryID ID        `json:"category_id"` //[category_id]
-	Lead       *ref.Lead `json:"lead"`        //[lead]
+	By         load.ByCode `json:"by"`          //BY: category_id|lead
+	CategoryID ID          `json:"category_id"` //[category_id]
+	Lead       *ref.Lead   `json:"lead"`        //[lead]
 }
 
 type LoadRequest struct {
@@ -96,7 +96,7 @@ type LoadRequest struct {
 	CtrlTag   []string         `json:"ctrl_tag,omitempty"`  //控制标
 	Available *ctrl.BooleanSet `json:"available,omitempty"` //是否只返回有效,默认true
 	Keyword   *ctrl.StringSet  `json:"keyword,omitempty"`   //关键词信息
-	Page      load.Page        `json:"page"`                //分页信息
+	Page      *load.Page       `json:"page"`                //分页信息
 }
 
 type Service interface {
@@ -104,5 +104,5 @@ type Service interface {
 	Set(req SetRequest) (*Category, *errors.Error)
 	Get(req GetRequest) (*Category, *errors.Error)
 	Remove(CategoryID string) *errors.Error
-	Load(req LoadRequest) ([]*Category, load.Paging, *errors.Error)
+	Load(req LoadRequest) ([]*Category, *load.Paging, *errors.Error)
 }
