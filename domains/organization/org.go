@@ -22,86 +22,103 @@ import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
+	"github.com/bitstwinkle/bitstwinkle-go/types/view/media"
+	"time"
 )
 
 type Organization struct {
-	Scope ref.Scope `json:"scope"` //所属域
-	Lead  ref.Lead  `json:"lead"`  //业务链接: 唯一
-	ID    string    `json:"id"`    //组织ID
+	Scope ref.Scope `bson:"scope" json:"scope"` //所属域
+	Lead  ref.Lead  `bson:"lead" json:"lead"`   //业务链接: 唯一
+	ID    string    `bson:"id" json:"id"`       //组织ID
 	Tree  struct {
-		Stair  int      `json:"stair"`  //所属层级
-		Parent string   `json:"parent"` //父亲ID
-		Path   []string `json:"path"`   //全路径
-	} `json:"tree"` //组织结构
-	Name       string    `json:"name"`        //组织名称
-	Alias      string    `json:"alias"`       //组织别名
-	Logo       string    `json:"logo"`        //对应LOGO
-	Memo       string    `json:"memo"`        //备注信息
-	Info       more.More `json:"info"`        //更多信息
-	Ctrl       ctrl.Ctrl `json:"ctrl"`        //控制信息
-	BirthAt    string    `json:"birth_at"`    //创建时间
-	ModifiedAt string    `json:"modified_at"` //最后更新时间
+		Stair  int      `bson:"stair" json:"stair"`   //所属层级
+		Parent string   `bson:"parent" json:"parent"` //父亲ID
+		Path   []string `bson:"path" json:"path"`     //全路径
+	} `bson:"tree" json:"tree"` //组织结构
+	Title      string     `bson:"title" json:"title"`              //组织名称
+	Info       more.More  `bson:"info" json:"info"`                //更多信息
+	Media      media.More `bson:"media" bson:"media" json:"media"` //媒体信息
+	Available  bool       `bson:"available" json:"available"`      //是否可用
+	Ctrl       *ctrl.Ctrl `bson:"ctrl" json:"ctrl"`                //控制信息
+	BirthAt    time.Time  `bson:"birth_at" json:"birth_at"`        //创建时间
+	ModifiedAt time.Time  `bson:"modified_at" json:"modified_at"`  //最后更新时间
 }
 
 type Worker struct {
-	Scope   ref.Scope `json:"scope"`  //所属域
-	OrgID   string    `json:"org_id"` //所属组织ID
+	Scope   ref.Scope `bson:"scope" json:"scope"`   //所属域
+	OrgID   string    `bson:"org_id" json:"org_id"` //所属组织ID
 	OrgTree struct {
-		Stair  int      `json:"stair"`  //所属层级
-		Parent string   `json:"parent"` //父亲ID
-		Path   []string `json:"path"`   //全路径
+		Stair  int      `bson:"stair" json:"stair"`   //所属层级
+		Parent string   `bson:"parent" json:"parent"` //父亲ID
+		Path   []string `bson:"path" json:"path"`     //全路径
 	} `json:"org_tree"` //组织结构
-	OrgLeader  bool      `json:"org_leader"`  //是否该组织管理员,ORG唯一
-	ID         string    `json:"id"`          //工作者ID
-	UsrID      string    `json:"usr_id"`      //所对应的用户ID
-	WorkNumb   string    `json:"work_numb"`   //工号,顶层组织下唯一
-	WorkID     string    `json:"work_id"`     //工作用ID,例如 tony.zs
-	WorkAlias  string    `json:"work_alias"`  //工作昵称
-	Permission []string  `json:"permission"`  //顶层组织内权限码
-	BirthAt    string    `json:"birth_at"`    //创建时间
-	ModifiedAt string    `json:"modified_at"` //最后更新时间
-	Info       more.More `json:"info"`        //更多信息
-	Ctrl       ctrl.Ctrl `json:"ctrl"`        //控制信息
+	OrgLeader  bool       `bson:"org_leader" json:"org_leader"`   //是否该组织管理员,ORG唯一
+	ID         string     `bson:"id" json:"id"`                   //工作者ID
+	UsrID      string     `bson:"usr_id" json:"usr_id"`           //所对应的用户ID
+	WorkNumb   string     `bson:"work_numb" json:"work_numb"`     //工号,顶层组织下唯一
+	WorkID     string     `bson:"work_id" json:"work_id"`         //工作用ID,例如 tony.zs
+	WorkAlias  string     `bson:"work_alias" json:"work_alias"`   //工作昵称
+	Permission []string   `bson:"permission" json:"permission"`   //顶层组织内权限码
+	Info       more.More  `bson:"info" json:"info"`               //更多信息
+	Media      media.More `bson:"media" json:"media"`             //媒体信息
+	Available  bool       `bson:"available" json:"available"`     //是否可用
+	Ctrl       *ctrl.Ctrl `bson:"ctrl" json:"ctrl"`               //控制信息
+	BirthAt    string     `bson:"birth_at" json:"birth_at"`       //创建时间
+	ModifiedAt string     `bson:"modified_at" json:"modified_at"` //最后更新时间
 }
 
 type OrgRegisterRequest struct {
-	Scope    ref.Scope  `json:"scope"`           //[*]所属域
-	Lead     ref.Lead   `json:"lead"`            //[*]业务链接
-	ParentID string     `json:"parent_id"`       //[|]父亲组织ID,顶层组织使用$
-	Name     string     `json:"name"`            //[*]组织名称
-	Leader   string     `json:"leader"`          //[*]组织管理员,user.ID
-	Alias    string     `json:"alias,omitempty"` //[-]别名
-	Logo     string     `json:"logo,omitempty"`  //[-]LOGO
-	Memo     string     `json:"memo,omitempty"`  //[-]备注信息
-	Info     more.Array `json:"info,omitempty"`  //[-]更多信息
-	Ctrl     ctrl.Ctrl  `json:"ctrl,omitempty"`  //[-]控制信息
+	Scope    ref.Scope `json:"scope"`     //[*]所属域
+	Lead     ref.Lead  `json:"lead"`      //[*]业务链接
+	ParentID string    `json:"parent_id"` //[|]父亲组织ID,顶层组织使用$
+	Title    string    `json:"title"`     //[*]组织名称
+	Leader   string    `json:"leader"`    //[*]组织管理员,user.ID
+	Info     *struct {
+		Alias string     `bson:"alias" json:"alias"`
+		Intro string     `bson:"intro" json:"intro"`
+		More  more.Array `bson:"more" json:"more"`
+	} `bson:"info" json:"info"`
+	Media *struct {
+		Logo    *media.Media `bson:"logo" json:"logo"`
+		Primary *media.Media `bson:"primary" json:"primary"`
+		More    media.Array  `bson:"more" json:"more"`
+	} `bson:"media" json:"media"`
+	Ctrl *ctrl.Ctrl `json:"ctrl"` //[-]控制信息
 }
 
 type OrgGetRequest struct {
-	By    load.ByCode `json:"by"`     //id|lead
-	Scope ref.Scope   `json:"scope"`  //[*]所属业务域
-	UsrID string      `json:"usr_id"` //[|]用户ID
-	Lead  *ref.Lead   `json:"lead"`   //[|]业务链接
+	By    load.ByCode `bson:"by" json:"by"`         //id|lead
+	Scope ref.Scope   `bson:"scope" json:"scope"`   //[*]所属业务域
+	UsrID string      `bson:"usr_id" json:"usr_id"` //[|]用户ID
+	Lead  *ref.Lead   `bson:"lead" json:"lead"`     //[|]业务链接
 }
 
 type OrgSetRequest struct {
-	Scope   ref.Scope `json:"scope"`              //[*]所属域
-	OrgID   string    `json:"org_id"`             //[*]组织ID
-	InfoSet *more.Set `json:"info_set,omitempty"` //[|]展示信息
-	CtrlSet *ctrl.Set `json:"ctrl_set,omitempty"` //[|]控制信息
+	Scope        ref.Scope        `bson:"scope" json:"scope"`                 //[*]所属域
+	OrgID        string           `bson:"org_id" json:"org_id"`               //[*]组织ID
+	InfoSet      *more.Set        `bson:"info_set" json:"info_set"`           //[|]展示信息
+	AvailableSet *ctrl.BooleanSet `bson:"available_set" json:"available_set"` //是否生效
+	CtrlSet      *ctrl.Set        `bson:"ctrl_set" json:"ctrl_set"`           //[|]控制信息
+}
+
+type OrgLoadRequest struct {
+	ParentIDArray []string   `bson:"parent_id_array" json:"parent_id_array"`
+	LeadArray     []ref.Lead `bson:"lead_array" json:"lead_array"`
+	IDArray       []string   `bson:"id_array" json:"id_array"`
+	Page          *load.Page `bson:"page" json:"page"`
 }
 
 type WorkerAddRequest struct {
-	Scope      ref.Scope  `json:"scope"`          //[*]所属域
-	OrgID      string     `json:"org_id"`         //[*]对应组织ID
-	UsrID      string     `json:"usr_id"`         //[*]对应用户ID
-	OrgLeader  bool       `json:"org_leader"`     //[-]是否组织管理员
-	WorkNumb   string     `json:"work_numb"`      //[-]工号,顶层组织下唯一
-	WorkID     string     `json:"work_id"`        //[-]工作用ID,例如 tony.zs
-	WorkAlias  string     `json:"work_alias"`     //[-]工作昵称
-	Permission []string   `json:"permission"`     //[-]顶层组织内权限码
-	Info       more.Array `json:"info,omitempty"` //[-]更多信息
-	Ctrl       ctrl.Ctrl  `json:"ctrl,omitempty"` //[-]控制信息
+	Scope      ref.Scope  `json:"scope"`      //[*]所属域
+	OrgID      string     `json:"org_id"`     //[*]对应组织ID
+	UsrID      string     `json:"usr_id"`     //[*]对应用户ID
+	OrgLeader  bool       `json:"org_leader"` //[-]是否组织管理员
+	WorkNumb   string     `json:"work_numb"`  //[-]工号,顶层组织下唯一
+	WorkID     string     `json:"work_id"`    //[-]工作用ID,例如 tony.zs
+	WorkAlias  string     `json:"work_alias"` //[-]工作昵称
+	Permission []string   `json:"permission"` //[-]顶层组织内权限码
+	Info       more.Array `json:"info"`       //[-]更多信息
+	Ctrl       *ctrl.Ctrl `json:"ctrl"`       //[-]控制信息
 }
 
 type WorkerGetRequest struct {
@@ -113,22 +130,34 @@ type WorkerGetRequest struct {
 }
 
 type WorkerSetRequest struct {
-	Scope         ref.Scope `json:"scope"`              //[*]所属域
-	Worker        string    `json:"worker"`             //[*]对应工作者ID
-	InfoSet       *more.Set `json:"info_set,omitempty"` //[|]展示信息
-	Permission    []string  `json:"permission"`         //[-]需要新增或更新的权限
-	RmvPermission []string  `json:"rmv_permission"`     //[-]需要删除的权限
-	CtrlSet       *ctrl.Set `json:"ctrl_set,omitempty"` //控制信息
+	Scope         ref.Scope  `bson:"scope" json:"scope"`       //[*]所属域
+	Worker        string     `bson:"worker" json:"worker"`     //[*]对应工作者ID
+	InfoSet       *more.Set  `bson:"info_set" json:"info_set"` //[|]展示信息
+	MediaSet      *media.Set `bson:"media_set" json:"media_set"`
+	PermissionSet *struct {
+		Yes        bool     `bson:"yes" json:"yes"`               //是否设置
+		Permission []string `bson:"permission" json:"permission"` //[-]需要新增或更新的权限
+		Removed    []string `bson:"removed" json:"removed"`       //[-]需要删除的权限
+	} `bson:"permission_set" json:"permission_set"`
+	AvailableSet *ctrl.BooleanSet `bson:"available_set" json:"available_set"` //是否生效
+	CtrlSet      *ctrl.Set        `json:"ctrl_set,omitempty"`                 //控制信息
+}
+
+type WorkerLoadRequest struct {
+	OrgIDArray  []string   `bson:"org_id_array" json:"org_id_array"`
+	IDArray     []string   `bson:"id_array" json:"id_array"`
+	UserIDArray []string   `bson:"user_id_array" json:"user_id_array"`
+	Page        *load.Page `bson:"page" json:"page"`
 }
 
 type Service interface {
 	OrgRegister(req OrgRegisterRequest) (orgID string, err *errors.Error)
 	OrgGet(req OrgGetRequest) (*Organization, *errors.Error)
 	OrgSet(req OrgSetRequest) *errors.Error
-	OrgSwitch(scope ref.Scope, orgID string, available bool) *errors.Error
+	OrgLoad(req OrgLoadRequest) ([]Organization, *load.Paging, *errors.Error)
 
 	WorkerAdd(req WorkerAddRequest) (workerID string, err *errors.Error)
 	WorkerGet(req WorkerGetRequest) (*Worker, *errors.Error)
 	WorkerSet(req WorkerSetRequest) (workerID string, err *errors.Error)
-	WorkerSwitch(scope ref.Scope, workerID string, available bool) *errors.Error
+	WorkerLoad(req WorkerLoadRequest) ([]Worker, *load.Paging, *errors.Error)
 }
