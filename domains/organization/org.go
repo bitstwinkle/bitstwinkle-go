@@ -89,7 +89,7 @@ type OrgRegisterRequest struct {
 type OrgGetRequest struct {
 	By    load.ByCode `bson:"by" json:"by"`         //id|lead
 	Scope ref.Scope   `bson:"scope" json:"scope"`   //[*]所属业务域
-	UsrID string      `bson:"usr_id" json:"usr_id"` //[|]用户ID
+	OrgID string      `bson:"org_id" json:"org_id"` //[|]ID
 	Lead  *ref.Lead   `bson:"lead" json:"lead"`     //[|]业务链接
 }
 
