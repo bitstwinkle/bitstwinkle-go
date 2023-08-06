@@ -45,7 +45,7 @@ type Feedback struct {
 	Media        *media.Media `json:"media,omitempty"`         //主图主视频
 	MediaMore    media.More   `json:"media_more,omitempty"`    //更多图视频
 	Status       state.Code   `json:"status"`                  //状态信息
-	CommentArray []*Comment   `json:"comment_array,omitempty"` //评论记录
+	CommentArray []Comment    `json:"comment_array,omitempty"` //评论记录
 	BirthAt      string       `json:"birth_at"`                //创建时间
 	ModifiedAt   string       `json:"modified_at"`             //最后修改时间
 }
@@ -67,7 +67,7 @@ type LoadRequest struct {
 	Scope     *ref.Scope  `json:"scope"`
 	Submitter *ref.Collar `json:"submitter,omitempty"`
 	Acceptor  *ref.Collar `json:"acceptor,omitempty"`
-	Page      load.Page   `json:"page"`
+	Page      *load.Page  `json:"page"`
 }
 
 type AdvanceRequest struct {
@@ -80,7 +80,7 @@ type AdvanceRequest struct {
 }
 
 type Service interface {
-	Submit(req SubmitRequest) (feedbackID string, err *errors.Error)
-	Load(req LoadRequest) ([]Feedback, load.Paging, *errors.Error)
-	Advance(req AdvanceRequest) (feedbackID string, err *errors.Error)
+	Submit(req SubmitRequest) (feedback *Feedback, err *errors.Error)
+	Load(req LoadRequest) (arr []Feedback, paging *load.Paging, err *errors.Error)
+	Advance(req AdvanceRequest) (feedback *Feedback, err *errors.Error)
 }
