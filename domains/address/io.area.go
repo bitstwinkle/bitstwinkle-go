@@ -40,7 +40,7 @@ type Area struct {
 }
 
 type AreaLoadRequest struct {
-	By       load.By   `json:"by"`        //by: parent_id
-	ParentID string    `json:"parent_id"` //[parent_id]
-	Page     load.Page `json:"page"`      //分页信息
+	By       load.By    `json:"by"`        //by: parent_id
+	ParentID string     `json:"parent_id"` //[parent_id]
+	Page     *load.Page `json:"page"`      //分页信息
 }

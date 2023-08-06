@@ -27,10 +27,10 @@ import (
 )
 
 type Contact struct {
-	Person string    `bson:"person" json:"person"` //联系人姓名
-	Gender string    `bson:"gender" json:"gender"` //性别
-	Phone  string    `bson:"phone" json:"phone"`   //手机号码
-	More   more.More `bson:"more" json:"more"`     //更多信息
+	Person string     `bson:"person" json:"person"` //联系人姓名
+	Gender string     `bson:"gender" json:"gender"` //性别
+	Phone  string     `bson:"phone" json:"phone"`   //手机号码
+	More   more.Array `bson:"more" json:"more"`     //更多信息
 }
 
 type Address struct {

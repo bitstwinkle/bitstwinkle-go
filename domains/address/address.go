@@ -22,9 +22,9 @@ import (
 )
 
 type Service interface {
-	AreaLoad(req AreaLoadRequest) ([]Area, load.Paging, *errors.Error)
-	ZoneLoad(req ZoneLoadRequest) ([]Zone, load.Paging, *errors.Error)
+	AreaLoad(req AreaLoadRequest) ([]Area, *load.Paging, *errors.Error)
+	ZoneLoad(req ZoneLoadRequest) ([]Zone, *load.Paging, *errors.Error)
 	AddrRegister(req AddrRegisterRequest) (*Address, *errors.Error)
-	AddrLoad(req AddrLoadRequest) ([]Area, load.Paging, *errors.Error)
+	AddrLoad(req AddrLoadRequest) ([]Area, *load.Paging, *errors.Error)
 	AddrSet(req AddrSetRequest) (*Address, *errors.Error)
 }
