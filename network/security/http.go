@@ -38,17 +38,19 @@ const (
 	Auth                = "auth"
 	RefreshTokenPub     = "refresh_token_pub"
 	RefreshTokenPubSign = "refresh_token_pub_sign"
-	HeaderPrefix        = "Twinkle-"                  //Uniform prefix
-	HeaderTokenPub      = HeaderPrefix + "Token-Pub"  //Public
-	HeaderNonce         = HeaderPrefix + "Nonce"      //Nonce
-	HeaderTimestamp     = HeaderPrefix + "Timestamp"  //Timestamp
-	HeaderSignature     = HeaderPrefix + "Signature"  //Signature
-	HeaderTokenExpire   = HeaderPrefix + "Expiration" //Token Expiration
+	HeaderPrefix        = "Twinkle-" //Uniform prefix
+
+	HeaderSecretPub   = HeaderPrefix + "secret_pub" //Secret Pub
+	HeaderTokenPub    = HeaderPrefix + "Token-Pub"  //Token Public
+	HeaderNonce       = HeaderPrefix + "Nonce"      //Nonce
+	HeaderTimestamp   = HeaderPrefix + "Timestamp"  //Timestamp
+	HeaderSignature   = HeaderPrefix + "Signature"  //Signature
+	HeaderTokenExpire = HeaderPrefix + "Expiration" //Token Expiration
 )
 
 var signWithHeaderKey = []string{HeaderNonce, HeaderTimestamp, HeaderTokenPub}
 
-// Signature 按照协议签名
+// Signature Sign in accordance with the agreement
 func Signature(req *http.Request, tokenPub string, tokenPri string) *errors.Error {
 	nonce := unique.Rand()
 	timestamp := time.Now().Unix()
@@ -63,8 +65,23 @@ func Signature(req *http.Request, tokenPub string, tokenPri string) *errors.Erro
 	return nil
 }
 
-// GenSignature 对请求数据进行签名
-func GenSignature(req *http.Request, tokenPri string) (string, *errors.Error) {
+// TurnSignature Use signatures when exchanging protocols
+func TurnSignature(req *http.Request, secretPub string, secretPri string) *errors.Error {
+	nonce := unique.Rand()
+	timestamp := time.Now().Unix()
+	req.Header.Set(HeaderSecretPub, secretPub)
+	req.Header.Set(HeaderNonce, nonce)
+	req.Header.Set(HeaderTimestamp, fmt.Sprintf("%d", timestamp))
+	signStr, err := GenSignature(req, secretPri)
+	if err != nil {
+		return err
+	}
+	req.Header.Set(HeaderSignature, signStr)
+	return nil
+}
+
+// GenSignature Sign the request data
+func GenSignature(req *http.Request, priKey string) (string, *errors.Error) {
 	wrapper := make(map[string]string)
 
 	if len(req.URL.Query()) > 0 {
@@ -111,7 +128,7 @@ func GenSignature(req *http.Request, tokenPri string) (string, *errors.Error) {
 	}
 
 	joinStr := joinBuf.String()
-	signStr, err := sign.Sign(joinStr, tokenPri)
+	signStr, err := sign.Sign(joinStr, priKey)
 	if err != nil {
 		return strs.EMPTY, err
 	}

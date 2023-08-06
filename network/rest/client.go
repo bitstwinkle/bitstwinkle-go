@@ -52,14 +52,14 @@ func NewClient() *resty.Client {
 
 func doSignature(_ *resty.Client, request *http.Request) error {
 	rightNow := time.Now()
-	if gToken.AccessTokenExpire.Before(rightNow) {
+	if gToken.IsExpired() {
 		err := doTurn()
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 	} else {
-		if rightNow.Sub(gToken.AccessTokenExpire).Minutes() < 10 {
+		if rightNow.Sub(gToken.TokenExpire).Minutes() < 10 {
 			go func() {
 				err := doTurn()
 				if err != nil {
@@ -68,7 +68,7 @@ func doSignature(_ *resty.Client, request *http.Request) error {
 			}()
 		}
 	}
-	err := security.Signature(request, gToken.AccessTokenPub, gToken.AccessToken)
+	err := security.Signature(request, gToken.TokenPub, gToken.Token)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -84,9 +84,9 @@ func doWrapResponse(_ *resty.Client, response *resty.Response) error {
 	if strTokenExpire != strs.EMPTY {
 		tokenExpire := strs.Int64Of(strTokenExpire, 0)
 		newTokenExpireTime := time.UnixMilli(tokenExpire)
-		if gToken.AccessTokenExpire.Before(newTokenExpireTime) {
+		if gToken.TokenExpire.Before(newTokenExpireTime) {
 			gTokenMutex.Lock()
-			gToken.AccessTokenExpire = newTokenExpireTime
+			gToken.TokenExpire = newTokenExpireTime
 			gTokenMutex.Unlock()
 		}
 	}
@@ -116,24 +116,23 @@ func doTurn() *errors.Error {
 		log.Println("Function doTurn called too soon")
 		return nil
 	}
-
-	refreshTokenPubSign, err := security.Sign(gToken.RefreshTokenPub, gToken.RefreshToken)
-	if err != nil {
-		return err
-	}
 	var token security.Token
 	cli := resty.New().
 		SetBaseURL(gBaseUrl).
+		SetPreRequestHook(func(_ *resty.Client, request *http.Request) error {
+			err := security.TurnSignature(request, gSecretPub, gSecretKey)
+			if err != nil {
+				log.Println(err)
+				return err
+			}
+			return nil
+		}).
 		OnAfterResponse(doWrapResponse)
 	if sys.RunMode.IsRd() {
 		cli.EnableTrace()
 	}
 	_, nErr := cli.R().
 		SetResult(&token).
-		SetFormData(H{
-			security.RefreshTokenPub:     gToken.RefreshTokenPub,
-			security.RefreshTokenPubSign: refreshTokenPubSign,
-		}).
 		Post("/" + security.Security + "/" + security.Turn)
 	if nErr != nil {
 		return errors.Sys("system err: " + nErr.Error())
@@ -146,23 +145,24 @@ func doTurn() *errors.Error {
 }
 
 var gBaseUrl string
+var gSecretPub string
+var gSecretKey string
 var gToken security.Token
 var gTokenMutex sync.Mutex
 
 func init() {
 	var err *errors.Error
 	gBaseUrl = configure.GetString("bitstwinkle.url", DefaultBitstwinkleURL)
-
-	gToken.RefreshTokenPub, err = configure.MustGetString("bitstwinkle.auth.refresh.token.pub")
+	gSecretPub, err = configure.MustGetString("bitstwinkle.security.secret.pub")
 	if err != nil {
 		sys.Exit(err)
 		return
 	}
-	gToken.RefreshToken, err = configure.MustGetString("bitstwinkle.auth.refresh.token.pri")
+	gSecretKey, err = configure.MustGetString("bitstwinkle.security.secret.key")
 	if err != nil {
 		sys.Exit(err)
 		return
 	}
 	sys.Info("Bitstwinkle URL: ", gBaseUrl)
-	sys.Info("Bitstwinkle Refresh Token Pub: ", gToken.RefreshTokenPub)
+	sys.Info("Bitstwinkle Secret Pub: ", gSecretPub)
 }

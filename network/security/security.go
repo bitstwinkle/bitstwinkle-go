@@ -36,7 +36,7 @@ func (token Token) Clone(newToken Token) {
 	token.Token = newToken.Token
 }
 
-func (token Token) IsAccessExpired() bool {
+func (token Token) IsExpired() bool {
 	return token.TokenExpire.After(time.Now())
 }
 

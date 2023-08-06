@@ -22,6 +22,7 @@ import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
 	"github.com/spf13/viper"
+	"strings"
 	"time"
 )
 
@@ -116,5 +117,6 @@ func init() {
 	viper.SetConfigName(GetString("sys.mode", "local"))
 	viper.SetConfigType("yaml")
 	_ = viper.ReadInConfig()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 }
