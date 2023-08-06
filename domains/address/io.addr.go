@@ -75,7 +75,7 @@ type AddrSetRequest struct {
 }
 
 type AddrLoadRequest struct {
-	By      load.By       `bson:"by" json:"by"`             //BY: owner|suggest|
+	By      load.ByCode   `bson:"by" json:"by"`             //BY: owner|suggest|
 	Scope   ref.Scope     `bson:"scope" json:"scope"`       //[*]所属域
 	Lead    []ref.Lead    `bson:"lead" json:"lead"`         //[id|lead]业务领衔
 	IDArray []string      `bson:"id_array" json:"id_array"` //[id|lead]业务领衔

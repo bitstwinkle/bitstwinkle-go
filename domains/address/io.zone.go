@@ -41,8 +41,8 @@ type Zone struct {
 }
 
 type ZoneLoadRequest struct {
-	By       load.By    `json:"by"`        //by: area_id
-	AreaID   string     `json:"area_id"`   //[area_id]
-	WithDeep bool       `json:"with_deep"` //[area_id]是否钻取
-	Page     *load.Page `json:"page"`      //分页信息
+	By       load.ByCode `json:"by"`        //by: area_id
+	AreaID   string      `json:"area_id"`   //[area_id]
+	WithDeep bool        `json:"with_deep"` //[area_id]是否钻取
+	Page     *load.Page  `json:"page"`      //分页信息
 }
