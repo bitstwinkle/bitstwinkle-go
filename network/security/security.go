@@ -25,29 +25,19 @@ import (
 )
 
 type Token struct {
-	AccessTokenPub     string    `bson:"access_token_pub" json:"access_token_pub"`
-	AccessTokenExpire  time.Time `bson:"access_token_expire" json:"access_token_expire"`
-	AccessToken        string    `bson:"access_token" json:"access_token"`
-	RefreshTokenPub    string    `bson:"refresh_token_pub" json:"refresh_token_pub"`
-	RefreshTokenExpire time.Time `bson:"refresh_token_expire" json:"refresh_token_expire"`
-	RefreshToken       string    `bson:"refresh_token" json:"refresh_token"`
+	TokenPub    string    `bson:"token_pub" json:"token_pub"`
+	TokenExpire time.Time `bson:"token_expire" json:"token_expire"`
+	Token       string    `bson:"token" json:"token"`
 }
 
 func (token Token) Clone(newToken Token) {
-	token.AccessTokenPub = newToken.AccessTokenPub
-	token.AccessTokenExpire = newToken.AccessTokenExpire
-	token.AccessToken = newToken.AccessToken
-	token.RefreshTokenPub = newToken.RefreshTokenPub
-	token.RefreshTokenExpire = newToken.RefreshTokenExpire
-	token.RefreshToken = newToken.RefreshToken
+	token.TokenPub = newToken.TokenPub
+	token.TokenExpire = newToken.TokenExpire
+	token.Token = newToken.Token
 }
 
 func (token Token) IsAccessExpired() bool {
-	return token.AccessTokenExpire.After(time.Now())
-}
-
-func (token Token) IsRefreshExpired() bool {
-	return token.RefreshTokenExpire.After(time.Now())
+	return token.TokenExpire.After(time.Now())
 }
 
 type Passport struct {
@@ -58,9 +48,9 @@ type Passport struct {
 
 type Service interface {
 	// Turn Obtain a new token pair through refresh token
-	// refreshTokenPub: The public key used in network transmission
-	// refreshTokenPubSign: Local refresh token Private key Indicates the signature of the refresh token public key
-	Turn(refreshTokenPub string, refreshTokenPubSign string) (*Token, *errors.Error)
+	// secretPub: The public key used in network transmission
+	// sign: Parameters that are signed using secretKey
+	Turn(secretPub string, nonce string, timestamp time.Time, sign string) (*Token, *errors.Error)
 
 	// Auth Verifies the user and returns the TOKEN
 	Auth(passport Passport) (*Token, *errors.Error)
