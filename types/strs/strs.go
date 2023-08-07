@@ -56,3 +56,14 @@ func KeyVerify(str string) bool {
 	}
 	return match
 }
+
+// FBCut Intercept before and after, remaining specified length
+func FBCut(str string, max int) string {
+	l := len(str)
+	if l <= max {
+		return str
+	}
+	f := (max - 10) / 2
+	b := l - ((max - 10) - f)
+	return str[:f] + "**********" + str[b:]
+}
