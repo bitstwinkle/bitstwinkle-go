@@ -61,7 +61,7 @@ func GetLogger(key string) *zap.Logger {
 	maxBackups := configure.GetInt("logger."+key+".backup.max", 30)
 	maxAge := configure.GetInt("logger."+key+".age.max", 7)
 	compress := configure.GetBool("logger."+key+".compress", false)
-	sys.Success("# Initialize the " + key + " log system ..... #")
+	sys.Warn("# Initialize the " + key + " log system ..... #")
 	sys.Info(" * PATH: ", strings.ToUpper(rootPath), "      ${ logger."+key+".root }")
 	sys.Info(" * LEVEL: ", strings.ToUpper(logLevel), "      ${ logger."+key+".level }")
 	sys.Info(" * FILE: ", strings.ToUpper(fileName), "      ${ logger."+key+".file }")

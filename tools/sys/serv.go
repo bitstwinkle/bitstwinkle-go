@@ -38,6 +38,6 @@ func Exit(err error) {
 func init() {
 	ServerID = strings.ToUpper(xid.New().String())
 	RunMode = ModeValueOf(configure.GetString("sys.mode", string(LOCAL)))
-	Info("Server ID: ", ServerID)
-	Info("Run Mode: ", strings.ToUpper(string(RunMode)))
+	Warn("# Server ID: ", ServerID)
+	Warn("# Run Mode: ", strings.ToUpper(string(RunMode)))
 }
