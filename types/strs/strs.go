@@ -63,6 +63,9 @@ func FBCut(str string, max int) string {
 	if l <= max {
 		return str
 	}
+	if max <= 10 {
+		return str[:max]
+	}
 	f := (max - 10) / 2
 	b := l - ((max - 10) - f)
 	return str[:f] + "**********" + str[b:]

@@ -114,7 +114,12 @@ func GetLogger(key string) *zap.Logger {
 }
 
 var Logger *zap.Logger
+var Console *zap.Logger
 
 func init() {
 	Logger = GetLogger("commons")
+	Console = GetLogger("console")
+	sys.ConsoleToLogger(func(msg string) {
+		Console.Info(msg)
+	})
 }

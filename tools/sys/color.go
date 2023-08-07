@@ -55,5 +55,14 @@ func doFormat(args ...any) string {
 		buf.WriteString(" ")
 	}
 	msg := buf.String()
+	if consoleToLogger != nil {
+		consoleToLogger(msg)
+	}
 	return "[ " + msg + " ]"
+}
+
+var consoleToLogger func(msg string)
+
+func ConsoleToLogger(call func(msg string)) {
+	consoleToLogger = call
 }
