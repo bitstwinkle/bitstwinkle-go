@@ -43,7 +43,7 @@ func (m Scope) Verify() *errors.Error {
 }
 
 func (m Scope) String() string {
-	return m.Code + "@" + m.VN + "/" + m.JD
+	return "bitstwinkle://" + m.VN + "/" + m.JD + "/" + m.Code
 }
 
 func (m Scope) Same(other Scope) bool {
