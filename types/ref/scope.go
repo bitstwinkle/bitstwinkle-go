@@ -19,17 +19,22 @@ package ref
 import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
+	"github.com/bitstwinkle/bitstwinkle-go/types/ww"
 )
 
 // Scope Business scope definition
 type Scope struct {
-	Owner Collar `bson:"owner" json:"owner"`
-	Code  string `bson:"code" json:"code"`
+	VN   ww.VN  `bson:"vn" json:"vn"`
+	JD   ww.JD  `bson:"jd" json:"jd"`
+	Code string `bson:"code" json:"code"`
 }
 
 func (m Scope) Verify() *errors.Error {
-	if err := m.Owner.Verify(); err != nil {
-		return err
+	if m.VN == strs.EMPTY {
+		return errors.Verify("require scope.vn")
+	}
+	if m.JD == strs.EMPTY {
+		return errors.Verify("require scope.jd")
 	}
 	if m.Code == strs.EMPTY {
 		return errors.Verify("require scope.code")
@@ -38,9 +43,9 @@ func (m Scope) Verify() *errors.Error {
 }
 
 func (m Scope) String() string {
-	return m.Owner.String() + ":" + m.Code
+	return m.Code + "@" + m.VN + "/" + m.JD
 }
 
 func (m Scope) Same(other Scope) bool {
-	return m.Owner.Same(other.Owner) && m.Code == other.Code
+	return m.VN == other.VN && m.JD == other.JD && m.Code == other.Code
 }
