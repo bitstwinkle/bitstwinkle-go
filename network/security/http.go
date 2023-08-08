@@ -40,7 +40,7 @@ const (
 	RefreshTokenPubSign = "refresh_token_pub_sign"
 	HeaderPrefix        = "Twinkle-" //Uniform prefix
 
-	HeaderSecretPub   = HeaderPrefix + "secret_pub" //Secret Pub
+	HeaderSecretPub   = HeaderPrefix + "Secret-Pub" //Secret Pub
 	HeaderTokenPub    = HeaderPrefix + "Token-Pub"  //Token Public
 	HeaderNonce       = HeaderPrefix + "Nonce"      //Nonce
 	HeaderTimestamp   = HeaderPrefix + "Timestamp"  //Timestamp
