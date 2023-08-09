@@ -24,6 +24,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"os"
 	"strings"
 )
 
@@ -99,7 +100,7 @@ func GetLogger(key string) *zap.Logger {
 	atomicLevel.SetLevel(zapLogLevel)
 
 	writeSyncers := []zapcore.WriteSyncer{
-		zapcore.AddSync(&hook),
+		zapcore.AddSync(&hook), zapcore.AddSync(os.Stdout),
 	}
 
 	core := zapcore.NewCore(

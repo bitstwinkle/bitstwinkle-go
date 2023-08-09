@@ -19,13 +19,15 @@ package address
 import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/load"
+	"github.com/bitstwinkle/bitstwinkle-go/types/ww"
 )
 
 type Service interface {
-	AreaLoad(req AreaLoadRequest) ([]Area, *load.Paging, *errors.Error)
-	ZoneLoad(req ZoneLoadRequest) ([]Zone, *load.Paging, *errors.Error)
-	PoiLoad(req PoiLoadRequest) ([]POI, *load.Paging, *errors.Error)
-	AddrRegister(req AddrRegisterRequest) (*Address, *errors.Error)
-	AddrLoad(req AddrLoadRequest) ([]Area, *load.Paging, *errors.Error)
-	AddrSet(req AddrSetRequest) (*Address, *errors.Error)
+	AreaLoad(permit *ww.Permit, req AreaLoadRequest) ([]Area, *load.Paging, *errors.Error)
+	ZoneLoad(permit *ww.Permit, req ZoneLoadRequest) ([]Zone, *load.Paging, *errors.Error)
+	PoiLoad(permit *ww.Permit, req PoiLoadRequest) ([]POI, *load.Paging, *errors.Error)
+	AddrRegister(permit *ww.Permit, req AddrRegisterRequest) (AddrID, *errors.Error)
+	AddrGet(permit *ww.Permit, req AddrGetRequest) (*Address, *errors.Error)
+	AddrSet(permit *ww.Permit, req AddrSetRequest) (AddrID, *errors.Error)
+	AddrLoad(permit *ww.Permit, req AddrLoadRequest) ([]*Address, *load.Paging, *errors.Error)
 }

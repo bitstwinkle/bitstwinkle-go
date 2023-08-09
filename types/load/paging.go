@@ -38,18 +38,20 @@ type Paging struct {
 	ItemTotal int64 `json:"item_total"` // The Item Count
 }
 
-func (paging Paging) ToString() string {
+func (paging *Paging) ToString() string {
 	return fmt.Sprintf("size: %d|current: %d|total: %d|item_total: %d",
 		paging.Size, paging.Current, paging.Total, paging.ItemTotal)
 }
 
-func (paging Paging) WithItemTotal(itemTotal int64) {
+func (paging *Paging) WithItemTotal(itemTotal int64) {
 	if paging.Size == 0 {
-		fmt.Println("assert paging.Size > 0, but paging.Size == 0")
-		return
+		paging.Size = DefaultPagingSize
+	}
+	if paging.Current < FirstPage {
+		paging.Current = FirstPage
 	}
 
-	if paging.ItemTotal == 0 {
+	if itemTotal == 0 {
 		paging.Total = 0
 		paging.Current = FirstPage
 		return
@@ -69,11 +71,11 @@ func (paging Paging) WithItemTotal(itemTotal int64) {
 	}
 }
 
-func (paging Paging) Skip() int64 {
+func (paging *Paging) Skip() int64 {
 	return (paging.Current - 1) * paging.Size
 }
 
-func (paging Paging) Limit() int64 {
+func (paging *Paging) Limit() int64 {
 	return paging.Size
 }
 

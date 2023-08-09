@@ -85,6 +85,13 @@ type AddrSetRequest struct {
 	CtrlSet    *ctrl.Set  `bson:"ctrl_set" json:"ctrl_set"`       //Ctrl Info
 }
 
+type AddrGetRequest struct {
+	Scope  ref.Scope   `bson:"scope" json:"scope"`     //[*]Scope
+	By     load.ByCode `bson:"by" json:"by"`           //BY: lead|id
+	Lead   *ref.Lead   `bson:"lead" json:"lead"`       //[|] lead
+	AddrID AddrID      `bson:"addr_id" json:"addr_id"` //[|] addr id
+}
+
 type AddrLoadRequest struct {
 	Scope       ref.Scope     `bson:"scope" json:"scope"`           //[*]Scope
 	LeadArray   []ref.Lead    `bson:"lead_array" json:"lead_array"` //By Lead

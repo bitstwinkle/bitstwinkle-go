@@ -83,8 +83,9 @@ func NewMore() More {
 	return make(More)
 }
 
-func OfArray(arr Array) (More, *errors.Error) {
-	return collections.MapOfArray[Item](arr)
+func OfArray(arr Array) More {
+	m, _ := collections.MapOfArray[Item](arr)
+	return m
 }
 
 func (m More) ToArray() Array {

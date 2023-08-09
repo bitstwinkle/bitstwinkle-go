@@ -23,12 +23,13 @@ import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
 	"github.com/bitstwinkle/bitstwinkle-go/types/view/media"
+	"github.com/bitstwinkle/bitstwinkle-go/types/ww"
 	"time"
 )
 
 type Organization struct {
 	Scope ref.Scope `bson:"scope" json:"scope"` //所属域
-	Lead  ref.Lead  `bson:"lead" json:"lead"`   //业务链接: 唯一
+	Lead  *ref.Lead `bson:"lead" json:"lead"`   //业务链接: 唯一
 	ID    string    `bson:"id" json:"id"`       //组织ID
 	Tree  struct {
 		Stair  int      `bson:"stair" json:"stair"`   //所属层级
@@ -52,24 +53,24 @@ type Worker struct {
 		Parent string   `bson:"parent" json:"parent"` //父亲ID
 		Path   []string `bson:"path" json:"path"`     //全路径
 	} `json:"org_tree"` //组织结构
-	OrgLeader  bool       `bson:"org_leader" json:"org_leader"`   //是否该组织管理员,ORG唯一
-	ID         string     `bson:"id" json:"id"`                   //工作者ID
-	UsrID      string     `bson:"usr_id" json:"usr_id"`           //所对应的用户ID
-	WorkNumb   string     `bson:"work_numb" json:"work_numb"`     //工号,顶层组织下唯一
-	WorkID     string     `bson:"work_id" json:"work_id"`         //工作用ID,例如 tony.zs
-	WorkAlias  string     `bson:"work_alias" json:"work_alias"`   //工作昵称
-	Permission []string   `bson:"permission" json:"permission"`   //顶层组织内权限码
-	Info       more.More  `bson:"info" json:"info"`               //更多信息
-	Media      media.More `bson:"media" json:"media"`             //媒体信息
-	Available  bool       `bson:"available" json:"available"`     //是否可用
-	Ctrl       *ctrl.Ctrl `bson:"ctrl" json:"ctrl"`               //控制信息
-	BirthAt    string     `bson:"birth_at" json:"birth_at"`       //创建时间
-	ModifiedAt string     `bson:"modified_at" json:"modified_at"` //最后更新时间
+	OrgLeader  bool       `bson:"org_leader" json:"org_leader"`                     //是否该组织管理员,ORG唯一
+	ID         string     `bson:"id" json:"id"`                                     //工作者ID
+	UsrID      string     `bson:"usr_id" json:"usr_id"`                             //所对应的用户ID
+	WorkNumb   string     `bson:"work_numb" json:"work_numb"`                       //工号,顶层组织下唯一
+	WorkID     string     `bson:"work_id" json:"work_id"`                           //工作用ID,例如 tony.zs
+	WorkAlias  string     `bson:"work_alias" json:"work_alias"`                     //工作昵称
+	Permission []string   `bson:"permission,omitempty" json:"permission,omitempty"` //顶层组织内权限码
+	Info       more.More  `bson:"info,omitempty" json:"info,omitempty"`             //更多信息
+	Media      media.More `bson:"media,omitempty" json:"media,omitempty"`           //媒体信息
+	Available  bool       `bson:"available" json:"available"`                       //是否可用
+	Ctrl       *ctrl.Ctrl `bson:"ctrl,omitempty" json:"ctrl,omitempty"`             //控制信息
+	BirthAt    time.Time  `bson:"birth_at" json:"birth_at"`                         //创建时间
+	ModifiedAt time.Time  `bson:"modified_at" json:"modified_at"`                   //最后更新时间
 }
 
 type OrgRegisterRequest struct {
 	Scope    ref.Scope `json:"scope"`     //[*]所属域
-	Lead     ref.Lead  `json:"lead"`      //[*]业务链接
+	Lead     *ref.Lead `json:"lead"`      //[*]业务链接
 	ParentID string    `json:"parent_id"` //[|]父亲组织ID,顶层组织使用$
 	Title    string    `json:"title"`     //[*]组织名称
 	Leader   string    `json:"leader"`    //[*]组织管理员,user.ID
@@ -102,10 +103,11 @@ type OrgSetRequest struct {
 }
 
 type OrgLoadRequest struct {
-	ParentIDArray []string   `bson:"parent_id_array" json:"parent_id_array"`
-	LeadArray     []ref.Lead `bson:"lead_array" json:"lead_array"`
-	IDArray       []string   `bson:"id_array" json:"id_array"`
-	Page          *load.Page `bson:"page" json:"page"`
+	Scope         ref.Scope   `bson:"scope" json:"scope"` //[*]所属域
+	ParentIDArray []string    `bson:"parent_id_array" json:"parent_id_array"`
+	LeadArray     []*ref.Lead `bson:"lead_array" json:"lead_array"`
+	IDArray       []string    `bson:"id_array" json:"id_array"`
+	Page          *load.Page  `bson:"page" json:"page"`
 }
 
 type WorkerAddRequest struct {
@@ -122,11 +124,11 @@ type WorkerAddRequest struct {
 }
 
 type WorkerGetRequest struct {
-	By       load.ByCode `json:"by"`        //id|org&user
-	Scope    ref.Scope   `json:"scope"`     //[*]所属业务域
-	WorkerID string      `json:"worker_id"` //[id]工作者ID
-	OrgID    string      `json:"org_id"`    //[org&user]组织ID
-	UsrID    string      `json:"usr_id"`    //[org&user]USER ID
+	Scope    ref.Scope   `bson:"scope" json:"scope"` //[*]所属业务域
+	By       load.ByCode `json:"by"`                 //id|org_user
+	WorkerID string      `json:"worker_id"`          //[id]工作者ID
+	OrgID    string      `json:"org_id"`             //[org&user]组织ID
+	UsrID    string      `json:"usr_id"`             //[org&user]USER ID
 }
 
 type WorkerSetRequest struct {
@@ -144,6 +146,7 @@ type WorkerSetRequest struct {
 }
 
 type WorkerLoadRequest struct {
+	Scope       ref.Scope  `bson:"scope" json:"scope"` //[*]Scope
 	OrgIDArray  []string   `bson:"org_id_array" json:"org_id_array"`
 	IDArray     []string   `bson:"id_array" json:"id_array"`
 	UserIDArray []string   `bson:"user_id_array" json:"user_id_array"`
@@ -151,13 +154,13 @@ type WorkerLoadRequest struct {
 }
 
 type Service interface {
-	OrgRegister(req OrgRegisterRequest) (orgID string, err *errors.Error)
-	OrgGet(req OrgGetRequest) (*Organization, *errors.Error)
-	OrgSet(req OrgSetRequest) *errors.Error
-	OrgLoad(req OrgLoadRequest) ([]Organization, *load.Paging, *errors.Error)
+	OrgRegister(permit *ww.Permit, req OrgRegisterRequest) (orgID string, err *errors.Error)
+	OrgGet(permit *ww.Permit, req OrgGetRequest) (*Organization, *errors.Error)
+	OrgSet(permit *ww.Permit, req OrgSetRequest) *errors.Error
+	OrgLoad(permit *ww.Permit, req OrgLoadRequest) ([]Organization, *load.Paging, *errors.Error)
 
-	WorkerAdd(req WorkerAddRequest) (workerID string, err *errors.Error)
-	WorkerGet(req WorkerGetRequest) (*Worker, *errors.Error)
-	WorkerSet(req WorkerSetRequest) (workerID string, err *errors.Error)
-	WorkerLoad(req WorkerLoadRequest) ([]Worker, *load.Paging, *errors.Error)
+	WorkerAdd(permit *ww.Permit, req WorkerAddRequest) (workerID string, err *errors.Error)
+	WorkerGet(permit *ww.Permit, req WorkerGetRequest) (*Worker, *errors.Error)
+	WorkerSet(permit *ww.Permit, req WorkerSetRequest) (workerID string, err *errors.Error)
+	WorkerLoad(permit *ww.Permit, req WorkerLoadRequest) ([]Worker, *load.Paging, *errors.Error)
 }

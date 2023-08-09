@@ -26,3 +26,14 @@ type JD = string
 
 // Living The Value Living, user, cat, dog ...
 type Living = string
+
+// Permit : Passage permit
+type Permit struct {
+	VN     VN `bson:"vn" json:"vn"`
+	JD     JD `bson:"jd" json:"jd"`
+	Living `bson:"living" json:"living"`
+}
+
+func (p *Permit) String() string {
+	return "bitstwinkle://" + p.VN + "/" + p.JD + "/" + p.Living
+}

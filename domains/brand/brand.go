@@ -23,38 +23,43 @@ import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
 	"github.com/bitstwinkle/bitstwinkle-go/types/view/media"
+	"github.com/bitstwinkle/bitstwinkle-go/types/ww"
+	"time"
 )
 
+type ID = string
+
 type Brand struct {
-	ID         string     `json:"id"`          //品牌ID
-	Name       string     `json:"name"`        //名称
-	Code       string     `json:"code"`        //品牌编码
-	Media      media.More `json:"ex_media"`    //更多图视频
-	Info       more.More  `json:"info"`        //更多信息
-	Ctrl       ctrl.Ctrl  `json:"ctrl"`        //控制信息
-	BrithAt    string     `json:"brith_at"`    //创建时间
-	ModifiedAt string     `json:"modified_at"` //最后更新时间
+	Scope      ref.Scope  `bson:"scope" json:"scope"`
+	Lead       *ref.Lead  `bson:"lead" json:"lead"`
+	ID         ID         `bson:"id" json:"id"`
+	Title      string     `bson:"title" json:"title"`
+	Info       more.More  `json:"info"`
+	Media      media.More `bson:"media" json:"media"`
+	Ctrl       *ctrl.Ctrl `bson:"ctrl" json:"ctrl"`
+	BrithAt    time.Time  `bson:"brith_at" json:"brith_at"`
+	ModifiedAt time.Time  `bson:"modified_at"json:"modified_at"`
 }
 
 type RegisterRequest struct {
-	IdemID string    `json:"idem_id"` //[*]幂等ID
-	Scope  ref.Scope `json:"scope"`   //[*]所属业务域
-	Name   string    `json:"name"`    //[*]名称
-	Info   *struct {
-		Alias string     `json:"alias"` //[-]品牌别名
-		Code  string     `json:"code"`  //[-]品牌编码
-		More  more.Array `json:"more"`  //品牌主介绍
+	Scope ref.Scope `bson:"scope" json:"scope"` //[*]所属业务域
+	Lead  *ref.Lead `bson:"lead" json:"lead"`
+	Title string    `bson:"title" json:"title"` //[*]名称
+	Info  *struct {
+		Alias string     `bson:"alias" json:"alias"` //[-]品牌别名
+		Code  string     `bson:"code" json:"code"`   //[-]品牌编码
+		More  more.Array `bson:"more" json:"more"`   //品牌主介绍
 	} `json:"info"` //展示信息
 	Media *struct {
-		Logo    *media.Media `json:"logo,omitempty"`    //LOGO
-		Primary *media.Media `json:"primary,omitempty"` //主图视频
-		More    more.Array   `json:"more"`              //更多图视频
-	} `json:"media"` //图文视频
-	Ctrl ctrl.Ctrl `json:"ctrl"` //控制信息
+		Logo    *media.Media `bson:"logo" json:"logo"`      //LOGO
+		Primary *media.Media `bson:"primary"json:"primary"` //主图视频
+		More    media.Array  `bson:"more" json:"more"`      //更多图视频
+	} `bson:"media" json:"media"` //图文视频
+	Ctrl *ctrl.Ctrl `bson:"ctrl" json:"ctrl"` //控制信息
 }
 
 type SetRequest struct {
-	IdemID    string           `json:"idem_id"`             //[*]幂等ID
+	Scope     ref.Scope        `json:"scope"`               //[*]所属业务域
 	BrandID   string           `json:"brand_id"`            //[*]品牌ID
 	Available *ctrl.BooleanSet `json:"available,omitempty"` //[-]是否可用设置
 	MediaSet  *media.Set       `json:"media_set,omitempty"` //[-]MEDIA SET
@@ -63,22 +68,28 @@ type SetRequest struct {
 }
 
 type GetRequest struct {
-	By      load.ByCode `json:"by"`       //BY: brand_id[*]
-	BrandID string      `json:"brand_id"` //[brand_id]
+	Scope   ref.Scope   `bson:"scope" json:"scope"`       //[*]Scope
+	By      load.ByCode `bson:"by" json:"by"`             //BY: lead|id
+	BrandID string      `bson:"brand_id" json:"brand_id"` //[by id]
+	Lead    *ref.Lead   `bson:"lead" json:"lead"`         //[by lead]
 }
 
+type RemoveRequest = GetRequest
+
 type LoadRequest struct {
-	Scope     ref.Scope        `json:"scope"`               //[*]所属业务域
-	CtrlTag   []string         `json:"ctrl_tag,omitempty"`  //控制标
-	Available *ctrl.BooleanSet `json:"available,omitempty"` //是否只返回有效,默认true
-	Keyword   *ctrl.StringSet  `json:"keyword,omitempty"`   //关键词信息
-	Page      *load.Page       `json:"page"`                //分页信息
+	Scope        ref.Scope        `bson:"scope" json:"scope"`           //[*]SCOPE
+	LeadArray    []ref.Lead       `bson:"lead_array" json:"lead_array"` //Lead info
+	BrandIDArray []ID             `bson:"id_array" json:"id_array"`     //Brand ID info
+	Available    *ctrl.BooleanSet `bson:"available" json:"available"`   //Available
+	CtrlTag      []string         `bson:"ctrl_tag" json:"ctrl_tag"`     //Ctrl Tag
+	Keyword      *ctrl.StringSet  `bson:"keyword" json:"keyword"`       //Key Word
+	Page         *load.Page       `bson:"page" json:"page"`             //Page
 }
 
 type Service interface {
-	Register(req RegisterRequest) (*Brand, *errors.Error)
-	Get(req GetRequest) (*Brand, *errors.Error)
-	Set(req SetRequest) (*Brand, *errors.Error)
-	Remove(brandID string) *errors.Error
-	Load(req LoadRequest) ([]*Brand, *load.Paging, *errors.Error)
+	Register(permit *ww.Permit, req RegisterRequest) (ID, *errors.Error)
+	Get(permit *ww.Permit, req GetRequest) (*Brand, *errors.Error)
+	Set(permit *ww.Permit, req SetRequest) (ID, *errors.Error)
+	Remove(permit *ww.Permit, req RemoveRequest) (ID, *errors.Error)
+	Load(permit *ww.Permit, req LoadRequest) ([]*Brand, *load.Paging, *errors.Error)
 }

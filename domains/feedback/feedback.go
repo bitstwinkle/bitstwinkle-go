@@ -24,7 +24,11 @@ import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
 	"github.com/bitstwinkle/bitstwinkle-go/types/state"
 	"github.com/bitstwinkle/bitstwinkle-go/types/view/media"
+	"github.com/bitstwinkle/bitstwinkle-go/types/ww"
+	"time"
 )
+
+type ID = string
 
 type Comment struct {
 	ID      string     `json:"id"`             //评论ID
@@ -32,55 +36,63 @@ type Comment struct {
 	Comment string     `json:"comment"`        //评论
 	Ctrl    ctrl.Ctrl  `json:"ctrl,omitempty"` //控制信息
 	More    more.More  `json:"more,omitempty"` //扩展数据信息
-	LastAt  string     `json:"last_at"`        //最后修改时间
+	LastAt  time.Time  `json:"last_at"`        //最后修改时间
 }
 
 type Feedback struct {
-	Scope        ref.Scope    `json:"scope"`                   //所属业务域
-	ID           string       `json:"id"`                      //唯一ID
-	Submitter    ref.Collar   `json:"submitter"`               //提交者
-	Acceptor     ref.Collar   `json:"acceptor"`                //受理者
-	Feedback     string       `json:"feedback"`                //反馈信息
-	MemoMore     more.More    `json:"memo_more,omitempty"`     //更多备注信息
-	Media        *media.Media `json:"media,omitempty"`         //主图主视频
-	MediaMore    media.More   `json:"media_more,omitempty"`    //更多图视频
-	Status       state.Code   `json:"status"`                  //状态信息
-	CommentArray []Comment    `json:"comment_array,omitempty"` //评论记录
-	BirthAt      string       `json:"birth_at"`                //创建时间
-	ModifiedAt   string       `json:"modified_at"`             //最后修改时间
+	Scope        ref.Scope  `json:"scope"`               //所属业务域
+	ID           ID         `json:"id"`                  //唯一ID
+	Submitter    ref.Collar `json:"submitter"`           //提交者
+	Feedback     string     `json:"feedback"`            //反馈信息
+	Info         more.More  `json:"memo_more,omitempty"` //更多备注信息
+	Media        media.More `json:"media,omitempty"`     //主图主视频
+	Status       state.Code `json:"status"`              //状态信息
+	Ctrl         *ctrl.Ctrl `bson:"ctrl" json:"ctrl"`
+	CommentArray []*Comment `json:"comment_array,omitempty"` //评论记录
+	BirthAt      time.Time  `json:"birth_at"`                //创建时间
+	ModifiedAt   time.Time  `json:"modified_at"`             //最后修改时间
 }
 
 type SubmitRequest struct {
-	IdemID    string       `json:"idem_id"`              //[*]幂等ID
-	Scope     ref.Scope    `json:"scope"`                //[*]所属业务域
-	Submitter ref.Collar   `json:"submitter"`            //[*]提交者
-	Acceptor  ref.Collar   `json:"acceptor"`             //[*]受理者
-	Feedback  string       `json:"feedback"`             //[*]备注信息
-	MemoMore  more.Array   `json:"memo_more,omitempty"`  //[-]更多备注信息
-	Media     *media.Media `json:"media,omitempty"`      //[-]主图主视频
-	MediaMore media.Array  `json:"media_more,omitempty"` //[-]更多图视频
-	Status    state.Code   `json:"status"`               //[-]指定自定义状态信息
+	Scope     ref.Scope   `bson:"scope" json:"scope"`         //[*]Scope
+	Lead      *ref.Lead   `bson:"lead" json:"lead"`           //[*]Lead
+	Submitter ref.Collar  `bson:"submitter" json:"submitter"` //[*]Submitter
+	Feedback  string      `bson:"feedback" json:"feedback"`   //[*]Feedback
+	Info      more.Array  `bson:"info" json:"info"`           //[-]More Memo
+	Media     media.Array `bson:"media" json:"media"`         //[-]Media
+	Status    state.Code  `bson:"status" json:"status"`       //[-]Status
+	Ctrl      *ctrl.Ctrl  `bson:"ctrl" json:"ctrl"`           //[-]Ctrl
+}
+
+type GetRequest struct {
+	Scope      ref.Scope   `bson:"scope" json:"scope"` //[*]Scope
+	By         load.ByCode `bson:"by" json:"by"`       //BY: lead|id
+	FeedbackID ID          `bson:"feedback_id" json:"feedback_id"`
+	Lead       *ref.Lead   `bson:"lead" json:"lead"`
 }
 
 type LoadRequest struct {
-	By        load.ByCode `json:"by"` // scope|submitter|acceptor
-	Scope     *ref.Scope  `json:"scope"`
-	Submitter *ref.Collar `json:"submitter,omitempty"`
-	Acceptor  *ref.Collar `json:"acceptor,omitempty"`
-	Page      *load.Page  `json:"page"`
+	Scope           ref.Scope       `bson:"scope" json:"scope"`           //[*]SCOPE
+	LeadArray       []ref.Lead      `bson:"lead_array" json:"lead_array"` //Lead info
+	Submitter       []*ref.Collar   `bson:"submitter" json:"submitter"`   //Submitter
+	FeedbackIDArray []ID            `bson:"id_array" json:"id_array"`     //Brand ID info
+	CtrlTag         []string        `bson:"ctrl_tag" json:"ctrl_tag"`     //Ctrl Tag
+	Keyword         *ctrl.StringSet `bson:"keyword" json:"keyword"`       //Key Word
+	Page            *load.Page      `bson:"page" json:"page"`             //Page
 }
 
 type AdvanceRequest struct {
-	IdemID     string     `json:"idem_id"`        //[*]幂等ID
-	FeedbackID string     `json:"feedback_id"`    //[*]反馈ID
-	Handler    ref.Collar `json:"handler"`        //[*]处理者
-	Status     state.Code `json:"status"`         //[*]推进到的状态
-	Comment    string     `json:"comment"`        //[*]评论
-	More       more.Array `json:"more,omitempty"` //[-]扩展数据信息
+	Scope      ref.Scope  `bson:"scope" json:"scope"` //[*]Scope
+	FeedbackID string     `json:"feedback_id"`        //[*]反馈ID
+	Handler    ref.Collar `json:"handler"`            //[*]处理者
+	Status     state.Code `json:"status"`             //[*]推进到的状态
+	Comment    string     `json:"comment"`            //[*]评论
+	More       more.Array `json:"more,omitempty"`     //[-]扩展数据信息
 }
 
 type Service interface {
-	Submit(req SubmitRequest) (feedback *Feedback, err *errors.Error)
-	Load(req LoadRequest) (arr []Feedback, paging *load.Paging, err *errors.Error)
-	Advance(req AdvanceRequest) (feedback *Feedback, err *errors.Error)
+	Submit(permit *ww.Permit, req SubmitRequest) (feedbackID *ID, err *errors.Error)
+	Get(permit *ww.Permit, req GetRequest) (feedbackM *Feedback, err *errors.Error)
+	Load(permit *ww.Permit, req LoadRequest) (arr []*Feedback, paging *load.Paging, err *errors.Error)
+	Advance(permit *ww.Permit, req AdvanceRequest) (feedbackID *ID, err *errors.Error)
 }
