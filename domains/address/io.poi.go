@@ -19,33 +19,27 @@ package address
 import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 	"github.com/bitstwinkle/bitstwinkle-go/types/location"
-	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
 	"time"
 )
 
-type ZoneID = string
-type Zone struct {
-	ID     ZoneID `bson:"id" json:"id"`
-	AreaID AreaID `bson:"area_id "json:"area_id"`
-	Tree   struct {
-		Stair  int      `bson:"stair" json:"stair"`
-		Parent string   `bson:"parent" json:"parent"`
-		Path   []AreaID `bson:"path" json:"path"`
-	} `bson:"tree" json:"area_tree"`
-	ExLink     ref.LinkMore            `bson:"ex_link" json:"ex_link"`
-	Title      string                  `bson:"title" json:"title"`
-	Address    string                  `bson:"address" json:"address"`
-	Path       []Area                  `bson:"path" json:"path"`
-	Loc        *location.Loc           `bson:"loc,omitempty" json:"loc,omitempty"`
-	ExLoc      map[string]location.Loc `bson:"ex_loc" json:"ex_loc,omitempty"`
-	BirthAt    time.Time               `bson:"birth_at" json:"birth_at"`
-	ModifiedAt time.Time               `bson:"modified_at" json:"modified_at"`
+type PoiID = string
+type POI struct {
+	ID         PoiID         `bson:"id" json:"id"`                       //ADDR ID
+	Title      string        `bson:"title" json:"title"`                 //Name
+	Address    string        `bson:"address" json:"address"`             //Full Address String
+	AreaPath   []Area        `bson:"area_path"json:"area_path"`          //Full Area Path
+	Zone       Zone          `bson:"zone" json:"zone"`                   //Zone Info
+	Loc        *location.Loc `bson:"loc,omitempty" json:"loc,omitempty"` //Location
+	Available  bool          `bson:"available" json:"available"`         //Available
+	BirthAt    time.Time     `bson:"birth_at" json:"birth_at"`           //创建时间
+	ModifiedAt time.Time     `bson:"modified_at" json:"modified_at"`     //最后更新时间
 }
 
-type ZoneLoadRequest struct {
+type PoiLoadRequest struct {
 	AreaIDArray []AreaID   `bson:"area_id_array" json:"area_id_array"` //Area IDs
 	ZoneIDArray []ZoneID   `bson:"zone_id_array" json:"zone_id_array"` //Zone IDs
-	Page        *load.Page `bson:"page" json:"page"`
+	PoiIDArray  []PoiID    `bson:"poi_id_array" json:"poi_id_array"`   //POI IDs
+	Page        *load.Page `bson:"page" json:"page"`                   //Paging
 	With        *struct {
 		Deep bool `bson:"deep" json:"deep"`
 	} `bson:"with" json:"with"`

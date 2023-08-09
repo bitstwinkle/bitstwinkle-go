@@ -23,25 +23,26 @@ import (
 	"time"
 )
 
+type AreaID = string
+
 type Area struct {
-	ID   string `json:"id"`
+	ID   AreaID `bson:"id" json:"id"` //Area ID
 	Tree struct {
-		Stair  int      `json:"stair"`  //所属层级
-		Parent string   `json:"parent"` //父亲ID
-		Path   []string `json:"path"`   //全路径
-	} `json:"tree"`
-	ExLink     ref.LinkMore            `json:"ex_link"`          //外部链接信息,例如地图
-	Title      string                  `json:"title"`            //名称
-	Address    string                  `json:"address"`          //长地址信息
-	Path       []Area                  `json:"path"`             //全路径
-	Loc        *location.Loc           `json:"loc,omitempty"`    //坐标信息
-	ExLoc      map[string]location.Loc `json:"ex_loc,omitempty"` //扩展坐标信息
-	BirthAt    time.Time               `json:"birth_at"`         //创建时间
-	ModifiedAt time.Time               `json:"modified_at"`      //最后更新时间
+		Stair  int      `bson:"stair" json:"stair"`   //Level
+		Parent string   `bson:"parent" json:"parent"` //Parent ID
+		Path   []AreaID `bson:"path" json:"path"`     //FULL PATH
+	} `bson:"tree" json:"tree"` //The Area Tree
+	ExLink     ref.LinkMore  `bson:"ex_link,omitempty" json:"ex_link,omitempty"` //Third Link INfo
+	Title      string        `bson:"title" json:"title"`                         //Name
+	Address    string        `bson:"address" json:"address"`                     //Full Address String
+	Path       []Area        `bson:"path" json:"path"`                           //Full Path
+	Loc        *location.Loc `bson:"loc,omitempty" json:"loc,omitempty"`         //Location Info
+	Available  bool          `bson:"available" json:"available"`                 //Available
+	BirthAt    time.Time     `bson:"birth_at" json:"birth_at"`                   //Created Time
+	ModifiedAt time.Time     `bson:"modified_at" json:"modified_at"`             //Last Modify
 }
 
 type AreaLoadRequest struct {
-	By       load.ByCode `json:"by"`        //by: parent_id
-	ParentID string      `json:"parent_id"` //[parent_id]
-	Page     *load.Page  `json:"page"`      //分页信息
+	AreaIDArray []AreaID   `bson:"area_id_array" json:"area_id_array"` //Area IDs
+	Page        *load.Page `bson:"page" json:"page"`                   //page info
 }

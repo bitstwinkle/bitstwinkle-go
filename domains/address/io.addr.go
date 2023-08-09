@@ -26,59 +26,69 @@ import (
 	"time"
 )
 
+type AddrID = string
+
 type Contact struct {
-	Person string     `bson:"person" json:"person"` //联系人姓名
-	Gender string     `bson:"gender" json:"gender"` //性别
-	Phone  string     `bson:"phone" json:"phone"`   //手机号码
-	More   more.Array `bson:"more" json:"more"`     //更多信息
+	Person string    `bson:"person" json:"person"` //Name of contact person
+	Gender string    `bson:"gender" json:"gender"` //Gender
+	Phone  string    `bson:"phone" json:"phone"`   //Phone Number
+	More   more.More `bson:"more" json:"more"`     //More Info
 }
 
 type Address struct {
-	Scope      ref.Scope               `bson:"scope" json:"scope"`                                 //所属域
-	Lead       ref.Lead                `bson:"lead" json:"lead"`                                   //业务领衔
-	ID         string                  `bson:"id" json:"id"`                                       //ADDR ID
-	Title      string                  `bson:"title" json:"title"`                                 //名称
-	Address    string                  `bson:"address" json:"address"`                             //长地址信息
-	AreaPath   []Area                  `bson:"area_path"json:"area_path"`                          //全路径
-	Zone       Zone                    `bson:"zone" json:"zone"`                                   //所属小区
-	Loc        *location.Loc           `bson:"loc,omitempty" json:"loc,omitempty"`                 //坐标信息
-	ExLoc      map[string]location.Loc `bson:"ex_loc,omitempty" json:"ex_loc,omitempty"`           //扩展坐标信息
-	Contact    *Contact                `bson:"contact,omitempty" json:"contact,omitempty"`         //联系人信息
-	LabelArray label.Array             `bson:"label_array,omitempty" json:"label_array,omitempty"` //标签信息
-	Ctrl       ctrl.Ctrl               `bson:"ctrl" json:"ctrl"`                                   //控制信息
-	BirthAt    time.Time               `bson:"birth_at" json:"birth_at"`                           //创建时间
-	ModifiedAt time.Time               `bson:"modified_at" json:"modified_at"`                     //最后更新时间
+	Scope       ref.Scope     `bson:"scope" json:"scope"`                                 //Scope Info
+	Lead        ref.Lead      `bson:"lead" json:"lead"`                                   //Lead Info
+	ID          AddrID        `bson:"id" json:"id"`                                       //ADDR ID
+	LbsProvider string        `bson:"lbs_provider" json:"lbs_provider"`                   //Provider: INNER|GD|BAIDU|TENCENT|GOOGLE|...
+	LbsPoiID    string        `bson:"lbs_poi_id" json:"lbs_poi_id"`                       //POI ID
+	Title       string        `bson:"title" json:"title"`                                 //Address Shot String
+	AddrPath    []string      `bson:"addr_path"json:"addr_path"`                          //Full Path
+	Loc         *location.Loc `bson:"loc,omitempty" json:"loc,omitempty"`                 //Location Info
+	Contact     *Contact      `bson:"contact,omitempty" json:"contact,omitempty"`         //Contact Info
+	LabelArray  label.Array   `bson:"label_array,omitempty" json:"label_array,omitempty"` //Label Info
+	Ctrl        *ctrl.Ctrl    `bson:"ctrl,omitempty" json:"ctrl,omitempty"`               //Ctrl Info
+	BirthAt     time.Time     `bson:"birth_at" json:"birth_at"`                           //Created Time
+	ModifiedAt  time.Time     `bson:"modified_at" json:"modified_at"`                     //Modified Time
 }
 
 type AddrRegisterRequest struct {
-	Scope      ref.Scope       `bson:"scope" json:"scope"`                                 //所属域
-	Lead       *ref.Lead       `bson:"lead" json:"lead"`                                   //业务领衔
-	ZoneID     string          `bson:"zone_id" json:"zone_id"`                             //所属小区
-	Title      string          `bson:"title" json:"title"`                                 //名称
-	Loc        *location.Loc   `bson:"loc,omitempty" json:"loc,omitempty"`                 //坐标信息
-	ExLoc      []location.Item `bson:"ex_loc,omitempty" json:"ex_loc,omitempty"`           //扩展坐标信息
-	Contact    *Contact        `bson:"contact" json:"contact"`                             //联系人信息
-	LabelArray label.Array     `bson:"label_array,omitempty" json:"label_array,omitempty"` //标签信息
-	Ctrl       *ctrl.Ctrl      `bson:"ctrl,omitempty" json:"ctrl,omitempty"`               //控制信息
+	Scope       ref.Scope     `bson:"scope" json:"scope"`                 //Scope Info
+	Lead        *ref.Lead     `bson:"lead" json:"lead"`                   //Lead Info
+	LbsProvider string        `bson:"lbs_provider" json:"lbs_provider"`   //Provider: INNER|GD|BAIDU|TENCENT|GOOGLE|...
+	LbsPoiID    string        `bson:"lbs_poi_id" json:"lbs_poi_id"`       //POI ID
+	Title       string        `bson:"title" json:"title"`                 //Address Shot String
+	AddrPath    []string      `bson:"addr_path"json:"addr_path"`          //Full Path
+	Loc         *location.Loc `bson:"loc,omitempty" json:"loc,omitempty"` //坐标信息
+	Contact     *struct {
+		Person string     `bson:"person" json:"person"` //Name of contact person
+		Gender string     `bson:"gender" json:"gender"` //Gender
+		Phone  string     `bson:"phone" json:"phone"`   //Phone Number
+		More   more.Array `bson:"more" json:"more"`     //More Info
+	} `bson:"contact" json:"contact"` //Contact Info
+	LabelArray label.Array `bson:"label_array,omitempty" json:"label_array,omitempty"` //Label Info
+	Ctrl       *ctrl.Ctrl  `bson:"ctrl,omitempty" json:"ctrl,omitempty"`               //Ctrl Info
 }
 
 type AddrSetRequest struct {
-	Scope      ref.Scope          `bson:"scope" json:"scope"`             //[*]所属域
-	Lead       *ref.Lead          `bson:"lead" json:"lead"`               //[id|lead]业务领衔
-	AddrID     string             `bson:"addr_id" json:"addr_id"`         //[id|lead]所属地址ID
-	TitleSet   *ctrl.StringSet    `bson:"title_set" json:"title_set"`     //设置名称
-	LocSet     *location.Set      `bson:"loc_set" json:"loc_set"`         //设置坐标
-	ExLoc      *location.ExLocSet `bson:"ex_loc" json:"ex_loc"`           //扩展坐标信息
-	Contact    *Contact           `bson:"contact" json:"contact"`         //联系人信息
-	LabelArray label.Array        `bson:"label_array" json:"label_array"` //标签信息
-	CtrlSet    *ctrl.Set          `bson:"ctrl_set" json:"ctrl_set"`       //控制信息
+	Scope    ref.Scope       `bson:"scope" json:"scope"`         //[*]Scope Info
+	Lead     *ref.Lead       `bson:"lead" json:"lead"`           //[id|lead]业务领衔
+	AddrID   AddrID          `bson:"addr_id" json:"addr_id"`     //[id|lead]所属地址ID
+	TitleSet *ctrl.StringSet `bson:"title_set" json:"title_set"` //Set Title
+	LocSet   *location.Set   `bson:"loc_set" json:"loc_set"`     //Set Location
+	Contact  *struct {
+		Person string     `bson:"person" json:"person"` //Name of contact person
+		Gender string     `bson:"gender" json:"gender"` //Gender
+		Phone  string     `bson:"phone" json:"phone"`   //Phone Number
+		More   more.Array `bson:"more" json:"more"`     //More Info
+	} `bson:"contact" json:"contact"` //Contact Info
+	LabelArray *label.Set `bson:"label_array" json:"label_array"` //Label Info
+	CtrlSet    *ctrl.Set  `bson:"ctrl_set" json:"ctrl_set"`       //Ctrl Info
 }
 
 type AddrLoadRequest struct {
-	By      load.ByCode   `bson:"by" json:"by"`             //BY: owner|suggest|
-	Scope   ref.Scope     `bson:"scope" json:"scope"`       //[*]所属域
-	Lead    []ref.Lead    `bson:"lead" json:"lead"`         //[id|lead]业务领衔
-	IDArray []string      `bson:"id_array" json:"id_array"` //[id|lead]业务领衔
-	Loc     *location.Loc `bson:"loc" json:"loc"`           //就近查询
-	Page    *load.Page    `bson:"page" json:"page"`         //分页信息
+	Scope       ref.Scope     `bson:"scope" json:"scope"`           //[*]Scope
+	LeadArray   []ref.Lead    `bson:"lead_array" json:"lead_array"` //By Lead
+	AddrIDArray []AddrID      `bson:"id_array" json:"id_array"`     //By IDs
+	Loc         *location.Loc `bson:"loc" json:"loc"`               //By Loc
+	Page        *load.Page    `bson:"page" json:"page"`             //Page Info
 }
