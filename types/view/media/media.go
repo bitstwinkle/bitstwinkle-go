@@ -50,9 +50,9 @@ func (m Media) Verify() *errors.Error {
 }
 
 type Item struct {
-	Code       string  `bson:"code" json:"code"`
-	Seq        int     `bson:"seq" json:"seq"`
-	MediaArray []Media `bson:"media_array" json:"media_array"`
+	Code       string   `bson:"code" json:"code"`
+	Seq        int      `bson:"seq" json:"seq"`
+	MediaArray []*Media `bson:"media_array" json:"media_array"`
 }
 
 func (i Item) GetCode() string {

@@ -17,8 +17,11 @@
 package spec
 
 import (
+	"github.com/bitstwinkle/bitstwinkle-go/tools/md5"
 	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
+	"sort"
+	"strings"
 )
 
 type Value struct {
@@ -43,6 +46,23 @@ func (s Value) Verify() *errors.Error {
 
 func (s Value) GetSeq() int {
 	return s.Seq
+}
+
+// BuildValueArrayKey : The same Value array generates the same signature key value
+func BuildValueArrayKey(arr []Value) string {
+	if len(arr) == 0 {
+		return ""
+	}
+	sortedKeys := make([]string, len(arr))
+	for i, val := range arr {
+		sortedKeys[i] = val.Code + ":" + val.Option
+	}
+	sort.Strings(sortedKeys)
+	joinBuf := strings.Builder{}
+	for _, item := range sortedKeys {
+		joinBuf.WriteString(item)
+	}
+	return md5.MD5(joinBuf.String())
 }
 
 type Spec struct {
@@ -90,6 +110,29 @@ func Of(def Definition, val Value) (Spec, *errors.Error) {
 		Option: matchedDefOption,
 		Seq:    def.Seq,
 	}, nil
+}
+
+func Mix(defArr []Definition, valArr []Value) ([]Spec, *errors.Error) {
+	if len(defArr) == 0 || len(valArr) == 0 {
+		return []Spec{}, nil
+	}
+	defDict := make(map[string]Definition)
+	for _, defM := range defArr {
+		defDict[defM.Code] = defM
+	}
+	var specArr []Spec
+	for _, valM := range valArr {
+		defM, ok := defDict[valM.Code]
+		if !ok {
+			continue
+		}
+		specM, err := Of(defM, valM)
+		if err != nil {
+			return nil, err
+		}
+		specArr = append(specArr, specM)
+	}
+	return specArr, nil
 }
 
 type Set struct {

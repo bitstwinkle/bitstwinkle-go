@@ -25,19 +25,20 @@ import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
+	"github.com/bitstwinkle/bitstwinkle-go/types/ww"
 	"time"
 )
 
 type ID = string
 
 type Sku struct {
-	Scope      ref.Scope   `bson:"scope" json:"scope"`                 //所属业务域
-	SpuID      spu.ID      `bson:"spu_id" json:"spu_id"`               //SPU ID
-	Spec       []spec.Spec `bson:"spec" json:"spec"`                   //规格信息
-	Ctrl       *ctrl.Ctrl  `bson:"ctrl" json:"ctrl,omitempty"`         //控制信息
-	BirthAt    time.Time   `bson:"birth_at" json:"birth_at"`           //创建时间
-	ModifiedAt time.Time   `bson:"modified_at" json:"modified_at"`     //最后更新时间
-	Spu        *spu.Spu    `bson:"spu,omitempty" json:"spu,omitempty"` //SPU DETAIL
+	Scope      ref.Scope   `bson:"scope" json:"scope"`                   //所属业务域
+	SpuID      spu.ID      `bson:"spu_id" json:"spu_id"`                 //SPU ID
+	Spec       []spec.Spec `bson:"spec,omitempty" json:"spec,omitempty"` //规格信息
+	Ctrl       *ctrl.Ctrl  `bson:"ctrl" json:"ctrl,omitempty"`           //控制信息
+	BirthAt    time.Time   `bson:"birth_at" json:"birth_at"`             //创建时间
+	ModifiedAt time.Time   `bson:"modified_at" json:"modified_at"`       //最后更新时间
+	Spu        *spu.Spu    `bson:"spu,omitempty" json:"spu,omitempty"`   //SPU DETAIL
 }
 
 type CreateRequest struct {
@@ -56,8 +57,8 @@ type SetRequest struct {
 }
 
 type GetRequest struct {
-	By    load.By      `bson:"by" json:"by"`         //BY: sku_id|spu_id
 	Scope ref.Scope    `bson:"scope" json:"scope"`   //[*]所属业务域
+	By    load.By      `bson:"by" json:"by"`         //BY: sku_id|spu_id
 	SkuID ID           `bson:"sku_id" json:"sku_id"` //[sku_id]对应SkU ID
 	SpuID spu.ID       `bson:"spu_id" json:"spu_id"` //[spu_id]对应SPU ID
 	Spec  []spec.Value `bson:"spec" json:"spec"`     //[spu_id]SPEC
@@ -70,8 +71,8 @@ type LoadRequest struct {
 }
 
 type Service interface {
-	Create(req CreateRequest) (*Sku, *errors.Error)
-	Set(req SetRequest) (*Sku, *errors.Error)
-	Get(req GetRequest) (*Sku, *errors.Error)
-	Load(req LoadRequest) ([]Sku, load.Paging, *errors.Error)
+	Create(permit *ww.Permit, req CreateRequest) (ID, *errors.Error)
+	Set(permit *ww.Permit, req SetRequest) (ID, *errors.Error)
+	Get(permit *ww.Permit, req GetRequest) (*Sku, *errors.Error)
+	Load(permit *ww.Permit, req LoadRequest) ([]*Sku, load.Paging, *errors.Error)
 }
