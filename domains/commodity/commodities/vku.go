@@ -34,7 +34,6 @@ import (
 )
 
 type Vku struct {
-	VN             string              `bson:"vn" json:"vn"`                           //所属价值网络
 	Scope          ref.Scope           `bson:"scope" json:"scope"`                     //所属业务域
 	VkuID          VkuID               `bson:"vku_id" json:"vku_id"`                   //虚拟ID
 	Spec           []spec.Spec         `bson:"spec" json:"spec"`                       //规格信息
@@ -42,7 +41,7 @@ type Vku struct {
 	Volume         volume.Volume       `bson:"volume" json:"volume"`                   //销量信息
 	Price          money.Amount        `bson:"price" json:"price"`                     //指定的销售价
 	SuggestedPrice money.Amount        `bson:"suggested_price" json:"suggested_price"` //建议销售价
-	Ctrl           ctrl.Ctrl           `bson:"ctrl" json:"ctrl"`                       //控制信息
+	Ctrl           *ctrl.Ctrl          `bson:"ctrl" json:"ctrl"`                       //控制信息
 	Available      bool                `bson:"available" json:"available"`             //是否上架
 	BrithAt        time.Time           `bson:"brith_at" json:"brith_at"`               //创建时间
 	ModifiedAt     time.Time           `bson:"modified_at" json:"modified_at"`         //最后更新时间

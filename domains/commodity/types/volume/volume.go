@@ -17,6 +17,7 @@
 package volume
 
 import (
+	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/times"
 	"time"
 )
@@ -31,7 +32,35 @@ type Volume struct {
 	LastAt    time.Time `bson:"last_at" json:"last_at"`     //上次更新时间
 }
 
-func (m Volume) Inc(q int64) {
+func (m *Volume) Init(vol Volume) {
+	m.Total = vol.Total
+	m.Daily = vol.Daily
+	m.Weekly = vol.Weekly
+	m.Monthly = vol.Monthly
+	m.Quarterly = vol.Quarterly
+	m.Yearly = vol.Yearly
+	m.LastAt = vol.LastAt
+	if m.LastAt.IsZero() {
+		m.LastAt = time.Now()
+	}
+}
+
+func (m *Volume) Verify() *errors.Error {
+	if m.Total < 0 ||
+		m.Daily < 0 ||
+		m.Weekly < 0 ||
+		m.Monthly < 0 ||
+		m.Quarterly < 0 ||
+		m.Yearly < 0 {
+		return errors.Verify("all must > 0")
+	}
+	if m.LastAt.IsZero() {
+		m.LastAt = time.Now()
+	}
+	return nil
+}
+
+func (m *Volume) Inc(q int64) {
 	m.Total += q
 	now := time.Now()
 	if times.SameDay(now, m.LastAt) {

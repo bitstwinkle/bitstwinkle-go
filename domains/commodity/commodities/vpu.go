@@ -34,14 +34,13 @@ import (
 )
 
 type Vpu struct {
-	VN         string            `bson:"vn" json:"vn"`                   //所属价值网络
 	Scope      ref.Scope         `bson:"scope" json:"scope"`             //所属业务域
 	Category   category.Category `bson:"category_id" json:"category_id"` //所属类目
 	VpuID      VpuID             `bson:"vpu_id" json:"vpu_id"`           //VPU ID
 	Title      string            `bson:"title" json:"title"`             //标题
 	Info       more.More         `json:"info,omitempty"`                 //介绍
 	Media      media.More        `json:"media"`                          //图片视频
-	Ctrl       ctrl.Ctrl         `json:"ctrl"`                           //控制信息
+	Ctrl       *ctrl.Ctrl        `json:"ctrl"`                           //控制信息
 	Label      label.Array       `json:"label"`                          //标签
 	Spec       []spec.Definition `json:"spec"`                           //规格定义
 	BirthAt    time.Time         `json:"birth_at"`                       //创建时间

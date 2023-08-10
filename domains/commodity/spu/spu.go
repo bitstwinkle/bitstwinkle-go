@@ -50,17 +50,10 @@ type CreateRequest struct {
 	CategoryID string            `json:"category_id"` //所属类目
 	Title      string            `json:"title"`       //标题
 	Spec       []spec.Definition `json:"spec"`        //规格定义
-	Info       *struct {
-		Alias string     `json:"alias,omitempty"` //别名,可以设置多个别名,通过","(半角逗号)分割
-		Intro string     `json:"intro,omitempty"` //主介绍
-		More  more.Array `json:"more,omitempty"`  //更多信息内容
-	} `bson:"info" json:"info"`
-	Media *struct {
-		Primary *media.Media `json:"primary,omitempty"` //主图
-		More    media.Array  `json:"more,omitempty"`    //更多图片视频
-	} `bson:"media" json:"media"`
-	Label label.Array `json:"label,omitempty"` //标签
-	Ctrl  *ctrl.Ctrl  `json:"ctrl"`            //控制信息
+	Info       *more.Input       `bson:"info" json:"info"`
+	Media      *media.Input      `bson:"media" json:"media"`
+	Label      label.Array       `json:"label,omitempty"` //标签
+	Ctrl       *ctrl.Ctrl        `json:"ctrl"`            //控制信息
 }
 
 type SetRequest struct {

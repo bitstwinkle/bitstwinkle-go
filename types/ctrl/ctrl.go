@@ -62,7 +62,7 @@ func (c *Ctrl) WithPara(key string, value string) *Ctrl {
 }
 
 type Set struct {
-	Set      bool     `json:"set"`                     //是否设置
+	Yes      bool     `json:"yes"`                     //是否设置
 	AddTag   []string `json:"add_ctrl_tag,omitempty"`  //[|]控制标中需要新增的标
 	RmvTag   []string `json:"rmv_ctrl_tag,omitempty"`  //[|]控制标中需要删除的标
 	CtrlPara []Para   `json:"ctrl_para,omitempty"`     //[|]控制参数中需要新增或者更新的参数

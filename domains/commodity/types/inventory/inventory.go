@@ -26,7 +26,7 @@ const Unlimited int64 = 9999999999
 
 type Quota struct {
 	Limited bool  `bson:"limited" json:"limited"` //是否限制
-	Quota   int64 `bson:"value" json:"value"`     //限制的值
+	Quota   int64 `bson:"quota" json:"quota"`     //限制的值
 }
 
 func (q Quota) Verify() *errors.Error {

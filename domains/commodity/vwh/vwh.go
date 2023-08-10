@@ -42,38 +42,39 @@ type Vwh struct {
 	Scope           ref.Scope      `bson:"scope" json:"scope"`                                           //所属业务域
 	Lead            ref.Lead       `bson:"lead" json:"lead"`                                             //业务注入键值
 	ID              string         `bson:"id" json:"id"`                                                 //虚拟商品库ID
-	Name            string         `bson:"name" json:"name"`                                             //虚拟商品库名称
+	Tip             string         `bson:"tip" json:"tip"`                                               //虚拟商品库名称
 	Imported        bool           `bson:"imported" json:"imported"`                                     //是否引入的库
 	ImportedOptions *ImportOptions `bson:"imported_options,omitempty" json:"imported_options,omitempty"` //引入配置
 	Available       bool           `bson:"available" json:"available"`                                   //是否可用
-	Ctrl            ctrl.Ctrl      `bson:"ctrl" json:"ctrl"`                                             //控制信息
+	Ctrl            *ctrl.Ctrl     `bson:"ctrl" json:"ctrl"`                                             //控制信息
 	BirthAt         time.Time      `bson:"birth_at" json:"birth_at"`                                     //创建时间
 	ModifiedAt      time.Time      `bson:"modified_at" json:"modified_at"`                               //最后更新时间
 }
 
 type Item struct {
-	VwhID          string              `bson:"vwh_id" json:"vwh_id"`                   //所属商品库ID
-	SkuID          string              `bson:"sku_id" json:"sku_id"`                   //对应SKU ID
-	SpuID          string              `bson:"spu_id" json:"spu_id"`                   //对应SPU ID
-	Inventory      inventory.Inventory `bson:"inventory" json:"inventory"`             //库存信息
-	Volume         volume.Volume       `bson:"volume" json:"volume"`                   //销量信息
-	Price          money.Amount        `bson:"price" json:"price"`                     //指定的销售价
-	SuggestedPrice money.Amount        `bson:"suggested_price" json:"suggested_price"` //建议销售价
-	Ctrl           ctrl.Ctrl           `bson:"ctrl" json:"ctrl"`                       //控制信息
-	Available      bool                `bson:"available" json:"available"`             //是否上架
-	BrithAt        time.Time           `bson:"brith_at" json:"brith_at"`               //创建时间
-	ModifiedAt     time.Time           `bson:"modified_at" json:"modified_at"`         //最后更新时间
-	Commodity      *sku.Sku            `bson:"commodity" json:"commodity"`             //SKU 信息
+	Scope          ref.Scope           `bson:"scope" json:"scope"`                             //所属价值领域
+	ItemID         string              `bson:"item_id" json:"item_id"`                         //商品ID
+	VwhID          string              `bson:"vwh_id" json:"vwh_id"`                           //所属商品库ID
+	SkuID          string              `bson:"sku_id" json:"sku_id"`                           //对应SKU ID
+	SpuID          string              `bson:"spu_id" json:"spu_id"`                           //对应SPU ID
+	Inventory      inventory.Inventory `bson:"inventory" json:"inventory"`                     //库存信息
+	Volume         volume.Volume       `bson:"volume" json:"volume"`                           //销量信息
+	Price          money.Amount        `bson:"price" json:"price"`                             //指定的销售价
+	SuggestedPrice money.Amount        `bson:"suggested_price" json:"suggested_price"`         //建议销售价
+	Ctrl           *ctrl.Ctrl          `bson:"ctrl,omitempty" json:"ctrl,omitempty"`           //控制信息
+	Available      bool                `bson:"available" json:"available"`                     //是否上架
+	BrithAt        time.Time           `bson:"brith_at" json:"brith_at"`                       //创建时间
+	ModifiedAt     time.Time           `bson:"modified_at" json:"modified_at"`                 //最后更新时间
+	Commodity      *sku.Sku            `bson:"commodity,omitempty" json:"commodity,omitempty"` //SKU 信息
 }
 
 type CreateRequest struct {
-	IdemID          string         `bson:"idem_id" json:"idem_id"`                                       //[*]幂等ID
 	Scope           ref.Scope      `bson:"scope" json:"scope"`                                           //所属业务域
 	Lead            ref.Lead       `bson:"lead" json:"lead"`                                             //业务注入键值
-	Name            string         `bson:"name" json:"name"`                                             //虚拟商品库名称
+	Tip             string         `bson:"tip" json:"tip"`                                               //虚拟商品库名称
 	Imported        bool           `bson:"imported" json:"imported"`                                     //是否引入的库
 	ImportedOptions *ImportOptions `bson:"imported_options,omitempty" json:"imported_options,omitempty"` //引入配置
-	Ctrl            ctrl.Ctrl      `bson:"ctrl" json:"ctrl"`                                             //控制信息
+	Ctrl            *ctrl.Ctrl     `bson:"ctrl" json:"ctrl"`                                             //控制信息
 }
 
 type SetRequest struct {
@@ -91,9 +92,10 @@ type SetRequest struct {
 }
 
 type GetRequest struct {
-	By    load.By   `bson:"by" json:"by"`         //BY: vwh_id|lead
-	VwhID string    `bson:"vwh_id" json:"vwh_id"` //[vwh_id]
-	Lead  *ref.Lead `bson:"lead" json:"lead"`     //[lead]
+	Scope ref.Scope   `bson:"scope" json:"scope"`   //所属业务域
+	By    load.ByCode `bson:"by" json:"by"`         //BY: vwh_id|lead
+	VwhID ID          `bson:"vwh_id" json:"vwh_id"` //[vwh_id]
+	Lead  *ref.Lead   `bson:"lead" json:"lead"`     //[lead]
 }
 
 type LoadRequest struct {
@@ -105,10 +107,10 @@ type LoadRequest struct {
 }
 
 type ItemSetRequest struct {
-	IdemID       string    `bson:"idem_id" json:"idem_id"` //[*]幂等ID
-	Scope        ref.Scope `bson:"scope" json:"scope"`     //所属业务域
-	VwhID        string    `bson:"vwh_id" json:"vwh_id"`   //对应ID
-	SkuID        string    `bson:"sku_id" json:"sku_id"`   //对应SKU ID
+	Scope        ref.Scope `bson:"scope" json:"scope"`       //所属业务域
+	VwhID        string    `bson:"vwh_id" json:"vwh_id"`     //对应ID [id|lead]
+	VwhLead      *ref.Lead `bson:"vwh_lead" json:"vwh_lead"` //对应Lead [id|lead]
+	SkuID        string    `bson:"sku_id" json:"sku_id"`     //对应SKU ID
 	InventorySet *struct {
 		Yes   bool           `bson:"yes" json:"yes"`     //是否设置
 		Value inventory.Plan `bson:"value" json:"value"` //配额信息
@@ -118,15 +120,21 @@ type ItemSetRequest struct {
 		Value volume.Volume `bson:"value" json:"value"` //销量信息
 	} `bson:"volume_set,omitempty" json:"volume_set,omitempty"` //初始销量[*只在第一次初始化是有效,后面更新时无效*]
 	PriceSet          *money.AmountSet `bson:"price,omitempty" json:"price,omitempty"`                         //指定的销售价
-	SuggestedPriceSet *money.Amount    `bson:"suggested_price_set,omitempty" json:"suggested_price,omitempty"` //建议销售价
-	CtrlSet           *ctrl.Ctrl       `bson:"ctrl_set,omitempty" json:"ctrl_set,omitempty"`                   //控制信息
+	SuggestedPriceSet *money.AmountSet `bson:"suggested_price_set,omitempty" json:"suggested_price,omitempty"` //建议销售价
+	CtrlSet           *ctrl.Set        `bson:"ctrl_set,omitempty" json:"ctrl_set,omitempty"`                   //控制信息
 }
 
 type ItemGetRequest struct {
-	By    load.By   `bson:"by" json:"by"`         //BY:item_key[*]
-	Scope ref.Scope `bson:"scope" json:"scope"`   //所属业务域
-	VwhID string    `bson:"vwh_id" json:"vwh_id"` //对应ID
-	SkuID string    `bson:"sku_id" json:"sku_id"` //对应SKU ID
+	Scope  ref.Scope   `bson:"scope" json:"scope"` //所属业务域
+	By     load.ByCode `bson:"by" json:"by"`       //BY:[id|lead]
+	ItemID string      `bson:"item_id" json:"item_id"`
+	Lead   *struct {
+		VwhID string `bson:"vwh_id" json:"vwh_id"` //对应ID
+		SkuID string `bson:"sku_id" json:"sku_id"` //对应SKU ID
+	} `bson:"lead" json:"lead"`
+	With *struct {
+		Commodity bool `bson:"commodity" json:"commodity"`
+	} `bson:"with" json:"with"`
 }
 
 type ItemLoadRequest struct {

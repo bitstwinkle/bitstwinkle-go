@@ -16,7 +16,10 @@
 
 package load
 
-import "github.com/bitstwinkle/bitstwinkle-go/types/errors"
+import (
+	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
+	"strings"
+)
 
 type ByCode = string
 
@@ -44,7 +47,17 @@ func (by *By) Register(code ByCode, handle func() *errors.Error) *By {
 func (by *By) Do(byCode ByCode) *errors.Error {
 	call, ok := by.handlers[byCode]
 	if !ok {
-		return errors.Assert(byCode+".call", "nil")
+		return errors.Verify("[by] must be: [" + strings.Join(by.AllByCode(), "|") + "], but: [" + byCode + "]")
 	}
 	return call()
+}
+
+func (by *By) AllByCode() []string {
+	all := make([]string, len(by.handlers))
+	i := 0
+	for k, _ := range by.handlers {
+		all[i] = k
+		i += 1
+	}
+	return all
 }
