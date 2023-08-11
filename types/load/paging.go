@@ -31,6 +31,13 @@ type Page struct {
 	Current int64 `json:"page_no"`   // From One
 }
 
+func PageALL() *Page {
+	return &Page{
+		Size:    MaxPagingSize,
+		Current: FirstPage,
+	}
+}
+
 type Paging struct {
 	Size      int64 `json:"page_size"`  // Page Size, default 100
 	Current   int64 `json:"page_no"`    // From One

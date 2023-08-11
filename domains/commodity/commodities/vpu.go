@@ -39,9 +39,9 @@ type Vpu struct {
 	VpuID      VpuID             `bson:"vpu_id" json:"vpu_id"`           //VPU ID
 	Title      string            `bson:"title" json:"title"`             //标题
 	Info       more.More         `json:"info,omitempty"`                 //介绍
-	Media      media.More        `json:"media"`                          //图片视频
-	Ctrl       *ctrl.Ctrl        `json:"ctrl"`                           //控制信息
-	Label      label.Array       `json:"label"`                          //标签
+	Media      media.More        `json:"media,omitempty"`                //图片视频
+	Ctrl       *ctrl.Ctrl        `json:"ctrl,omitempty"`                 //控制信息
+	Label      label.Array       `json:"label,omitempty"`                //标签
 	Spec       []spec.Definition `json:"spec"`                           //规格定义
 	BirthAt    time.Time         `json:"birth_at"`                       //创建时间
 	ModifiedAt time.Time         `json:"modified_at"`                    //最后修改时间
@@ -51,7 +51,7 @@ type Vpu struct {
 		VwhID vwh.ID `bson:"vwh_id" json:"vwh_id"`
 		SpuID spu.ID `bson:"spu_id" json:"spu_id"`
 	} `bson:"related" json:"related"`
-	Commodities []Vku `json:"commodities"` //商品集
+	Commodities []*Vku `bson:"commodities,omitempty" json:"commodities,omitempty"` //商品集
 }
 
 type VpuLoadRequest struct {

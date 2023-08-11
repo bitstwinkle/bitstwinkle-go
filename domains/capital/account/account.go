@@ -42,17 +42,18 @@ type Running struct {
 
 // Account 虚拟账户
 type Account struct {
-	Scope       ref.Scope       `bson:"scope" json:"scope"`             //所属业务域
-	Lead        ref.Lead        `bson:"lead" json:"lead"`               //业务唯一KEY
-	ID          ID              `bson:"id" json:"id"`                   //账户ID
-	Title       string          `bson:"title" json:"title"`             //名称备注
-	Channel     capital.Channel `bson:"channel" json:"channel"`         //对应支付通道
-	Certificate Certificate     `bson:"certificate" json:"certificate"` //凭证信息
-	Available   bool            `bson:"available" json:"available"`     //是否可用
-	BirthAt     time.Time       `bson:"birth_at" json:"birth_at"`       //创建时间
-	ModifiedAt  time.Time       `bson:"modified_at" json:"modified_at"` //最后修改时间
+	Scope       ref.Scope       `bson:"scope" json:"scope"`                                 //所属业务域
+	Lead        ref.Lead        `bson:"lead" json:"lead"`                                   //业务唯一KEY
+	ID          ID              `bson:"id" json:"id"`                                       //账户ID
+	Tip         string          `bson:"tip" json:"tip"`                                     //名称备注
+	Channel     capital.Channel `bson:"channel" json:"channel"`                             //对应支付通道
+	ThirdID     string          `bson:"third_id" json:"third_id"`                           //三方ID
+	Certificate Certificate     `bson:"certificate,omitempty" json:"certificate,omitempty"` //凭证信息
+	Available   bool            `bson:"available" json:"available"`                         //是否可用
+	BirthAt     time.Time       `bson:"birth_at" json:"birth_at"`                           //创建时间
+	ModifiedAt  time.Time       `bson:"modified_at" json:"modified_at"`                     //最后修改时间
 
-	Running *Running `bson:"running" json:"running"` //总流水信息
+	Running *Running `bson:"running,omitempty" json:"running,omitempty"` //总流水信息
 }
 
 type Direction = int
@@ -76,11 +77,12 @@ type Bill struct {
 }
 
 type CreateRequest struct {
-	Scope       *ref.Scope      `bson:"scope" json:"scope"`             //[*]所属业务域
-	Lead        *ref.Lead       `bson:"lead" json:"lead"`               //[*]业务唯一KEY
-	Title       string          `bson:"title" json:"title"`             //[*]名称备注
+	Scope       ref.Scope       `bson:"scope" json:"scope"`             //[*]所属业务域
+	Lead        ref.Lead        `bson:"lead" json:"lead"`               //[*]业务唯一KEY
+	Tip         string          `bson:"tip" json:"tip"`                 //[*]名称备注
 	Channel     capital.Channel `bson:"channel" json:"channel"`         //[*]对应支付通道
-	Certificate Certificate     `bson:"certificate" json:"certificate"` //[*]凭证信息
+	ThirdID     string          `bson:"third_id" json:"third_id"`       //[*]三方账户ID
+	Certificate more.Array      `bson:"certificate" json:"certificate"` //[*]凭证信息
 }
 
 type SetRequest struct {
@@ -93,11 +95,14 @@ type SetRequest struct {
 }
 
 type GetRequest struct {
-	By        load.By   `bson:"by" json:"by"`                 //BY:id|lead
-	AccountID ID        `bson:"account_id" json:"account_id"` //账户ID
-	Lead      *ref.Lead `bson:"lead" json:"lead"`             //账户领衔
+	Scope     ref.Scope   `bson:"scope" json:"scope"`           //[*]所属业务域
+	By        load.ByCode `bson:"by" json:"by"`                 //BY:id|lead
+	AccountID ID          `bson:"account_id" json:"account_id"` //账户ID
+	Lead      *ref.Lead   `bson:"lead" json:"lead"`             //账户领衔
 
-	WithRunning bool `bson:"with_running" json:"with_running"` //携带资金流水,默认false
+	With *struct {
+		Running bool `bson:"running" json:"running"` //携带资金流水,默认false
+	} `bson:"with" json:"with"`
 }
 
 type BillLoadRequest struct {

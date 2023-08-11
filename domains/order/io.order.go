@@ -24,15 +24,19 @@ import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/money"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
 	"github.com/bitstwinkle/bitstwinkle-go/types/state"
+	"github.com/bitstwinkle/bitstwinkle-go/types/view/media"
+	"time"
 )
 
 type ID = string
 
 type Matter struct {
-	Ref      ref.Ref      `json:"ref"`      //对象引用
-	Price    money.Amount `json:"price"`    //单价
-	Quantity int64        `json:"quantity"` //数量
-	Amount   money.Amount `json:"amount"`   //金额
+	Ref         ref.Collar   `bson:"ref" json:"ref"`                 //The Matter Ref
+	Title       string       `bson:"title" json:"title"`             //The Matter Title
+	Price       money.Amount `bson:"price" json:"price"`             //Origin Price
+	Quantity    int64        `bson:"quantity" json:"quantity"`       //Order Quantity
+	Amount      money.Amount `bson:"amount" json:"amount"`           //Order Amount For This Matter
+	Requirement more.Array   `bson:"requirement" json:"requirement"` //Other Requirement
 }
 
 type Record struct {
@@ -45,47 +49,44 @@ type Record struct {
 type Status = string
 
 type Order struct {
-	Scope       ref.Scope     `json:"scope"`                  //所属业务域
-	Defined     ref.Defined   `json:"defined"`                //业务自定义键值
-	ID          ID            `json:"id"`                     //订单ID
-	Purchaser   ref.Ref       `json:"purchaser"`              //购买者
-	Provider    ref.Ref       `json:"provider"`               //提供者
-	Title       string        `json:"title"`                  //标题
-	Amount      money.Amount  `json:"amount"`                 //订单金额
-	MatterArray []Matter      `json:"matter_array"`           //订单关联商品事物
-	Address     *address.Area `json:"address"`                //配送地址
-	Memo        string        `json:"memo"`                   //备注信息
-	Status      state.Code    `json:"status"`                 //主状态
-	ExStatus    state.Code    `json:"ex_status"`              //各流程自定义状态
-	Info        more.More     `json:"info"`                   //更多信息数据
-	Ctrl        ctrl.Ctrl     `json:"ctrl"`                   //控制参数
-	RecordArray []Record      `json:"record_array,omitempty"` //订单变化记录
-	BirthAt     string        `json:"birth_at"`               //创建时间
-	ModifiedAt  string        `json:"modified_at"`            //最后修改时间
+	Scope       ref.Scope        `bson:"scope" json:"scope"`                                   //所属业务域
+	Defined     ref.Defined      `bson:"defined" json:"defined"`                               //业务自定义键值
+	ID          ID               `bson:"id" json:"id"`                                         //订单ID
+	Purchaser   ref.Collar       `bson:"purchaser" json:"purchaser"`                           //购买者
+	Provider    ref.Collar       `bson:"provider" json:"provider"`                             //提供者
+	Title       string           `bson:"title" json:"title"`                                   //标题
+	Amount      money.Amount     `bson:"amount" json:"amount"`                                 //订单金额
+	MatterArray []*Matter        `bson:"matter_array" json:"matter_array"`                     //订单关联商品事物
+	Address     *address.Address `bson:"address" json:"address"`                               //配送地址
+	Info        more.More        `bson:"info,omitempty" json:"info,omitempty"`                 //更多信息数据
+	Media       media.More       `bson:"media,omitempty" json:"media,omitempty"`               //更多媒体数据
+	Ctrl        *ctrl.Ctrl       `bson:"ctrl,omitempty" json:"ctrl,omitempty"`                 //控制参数
+	Status      state.Code       `bson:"status" json:"status"`                                 //主状态
+	ExStatus    state.Code       `bson:"ex_status" json:"ex_status"`                           //各流程自定义状态
+	RecordArray []*Record        `bson:"record_array,omitempty" json:"record_array,omitempty"` //订单变化记录
+	BirthAt     time.Time        `bson:"birth_at" json:"birth_at"`                             //创建时间
+	ModifiedAt  time.Time        `bson:"modified_at" json:"modified_at"`                       //最后修改时间
 }
 
 type CreateRequest struct {
-	Scope       *ref.Scope   `bson:"scope" json:"scope"`     //所属业务域
-	Defined     *ref.Defined `bson:"defined" json:"defined"` //业务自定义键值
-	Purchaser   *ref.Collar  `bson:"purchaser" json:"purchaser"`
-	Provider    *ref.Collar  `bson:"provider" json:"provider"`
+	Scope       ref.Scope    `bson:"scope" json:"scope"`     //所属业务域
+	Defined     ref.Defined  `bson:"defined" json:"defined"` //业务自定义键值
+	Purchaser   ref.Collar   `bson:"purchaser" json:"purchaser"`
+	Provider    ref.Collar   `bson:"provider" json:"provider"`
 	AddrID      string       `bson:"addr_id" json:"addr_id"`
 	Title       string       `bson:"title" json:"title"`
 	Amount      money.Amount `bson:"amount" json:"amount"`
-	Memo        string       `bson:"memo" json:"memo"`
-	ExStatus    state.Code   `bson:"ex_status" json:"ex_status"`
+	Info        *more.Input  `bson:"info" json:"info"`
+	Media       *media.Input `bson:"media" json:"media"`
 	Ctrl        *ctrl.Ctrl   `bson:"ctrl" json:"ctrl"`
-	MatterArray []struct {
-		Ref      ref.Collar   `bson:"ref" json:"ref"`           //对象引用
-		Price    money.Amount `bson:"price" json:"price"`       //单价
-		Quantity int64        `bson:"quantity" json:"quantity"` //数量
-		Amount   money.Amount `bson:"amount" json:"amount"`     //金额
-	}
+	ExStatus    state.Code   `bson:"ex_status" json:"ex_status"`
+	MatterArray []*Matter    `bson:"matter_array" json:"matter_array"`
 }
 
 type GetRequest struct {
-	By      load.By `bson:"by" json:"by"`             //BY: order_id
-	OrderID string  `bson:"order_id" json:"order_id"` //[order_id] ID
+	Scope   ref.Scope   `bson:"scope" json:"scope"`
+	By      load.ByCode `bson:"by" json:"by"`             //BY: id
+	OrderID string      `bson:"order_id" json:"order_id"` //[order_id] ID
 }
 
 type SetRequest struct {

@@ -19,9 +19,11 @@
 package payment
 
 import (
+	"github.com/bitstwinkle/bitstwinkle-go/domains/capital/account"
 	"github.com/bitstwinkle/bitstwinkle-go/domains/capital/capital"
 	"github.com/bitstwinkle/bitstwinkle-go/types/collections/more"
 	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
+	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 	"github.com/bitstwinkle/bitstwinkle-go/types/money"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
 )
@@ -44,54 +46,61 @@ const (
 )
 
 type Job struct {
-	JobID   string          `bson:"job_id" json:"job_id"`   //支付子单
-	Channel capital.Channel `bson:"channel" json:"channel"` //渠道码
-	Amount  money.Amount    `bson:"amount" json:"amount"`   //金额
-	Status  Status          `bson:"status" json:"status"`   //执行状态
-	Result  more.More       `bson:"result" json:"result"`   //最终结果
+	JobID          string          `bson:"job_id" json:"job_id"`                     //支付子单
+	PayerAccountID account.ID      `bson:"payer_account_id" json:"payer_account_id"` //付款人账户ID
+	PayeeAccountID account.ID      `bson:"payee_account_id" json:"payee_account_id"` //收款人账户ID
+	Channel        capital.Channel `bson:"channel" json:"channel"`                   //渠道码
+	Amount         money.Amount    `bson:"amount" json:"amount"`                     //金额
+	Status         Status          `bson:"status" json:"status"`                     //执行状态
+	Result         more.More       `bson:"result,omitempty" json:"result,omitempty"` //最终结果
+}
+
+type JobDefine struct {
+	PayerAccountLead ref.Lead        `bson:"payer_account_lead" json:"payer_account_lead"` //付款人账户
+	PayeeAccountLead ref.Lead        `bson:"payee_account_lead" json:"payee_account_lead"` //收款人账户
+	Channel          capital.Channel `bson:"channel" json:"channel"`                       //渠道码
+	Amount           money.Amount    `bson:"amount" json:"amount"`                         //金额
 }
 
 type Payment struct {
-	Scope     ref.Scope    `bson:"scope" json:"scope"`           //所属业务域
-	PaymentID ID           `bson:"payment_id" json:"payment_id"` //支付单ID
-	Lead      ref.Lead     `bson:"lead" json:"lead"`             //业务对应领衔:该领衔KEY同查找账户用的KEY一致
-	Payer     ref.Ref      `bson:"payer" json:"payer"`           //付款人
-	Payee     ref.Ref      `bson:"payee" json:"payee"`           //收款人
-	Issue     ref.Ref      `bson:"issue" json:"issue"`           //关联事务
-	Amount    money.Amount `bson:"amount" json:"amount"`         //总支付金额
-	Status    Status       `bson:"status" json:"status"`         //执行状态
-	JobArray  []*Job       `bson:"job_array" json:"job_array"`   //执行子任务
+	Scope    ref.Scope    `bson:"scope" json:"scope"`         //所属业务域
+	Lead     ref.Lead     `bson:"lead" json:"lead"`           //业务对应领衔:该领衔KEY同查找账户用的KEY一致
+	ID       ID           `bson:"id" json:"id"`               //支付单ID
+	Payer    ref.Collar   `bson:"payer" json:"payer"`         //付款人
+	Payee    ref.Collar   `bson:"payee" json:"payee"`         //收款人
+	Issue    ref.Collar   `bson:"issue" json:"issue"`         //关联事务
+	Amount   money.Amount `bson:"amount" json:"amount"`       //总支付金额
+	Status   Status       `bson:"status" json:"status"`       //执行状态
+	JobArray []*Job       `bson:"job_array" json:"job_array"` //执行子任务
 }
 
 type CreateRequest struct {
-	Scope    ref.Scope    `bson:"scope" json:"scope"`   //所属业务域
-	Lead     ref.Lead     `bson:"lead" json:"lead"`     //业务对应领衔[唯一,所以无需单独幂等]
-	Payer    ref.Ref      `bson:"payer" json:"payer"`   //付款人
-	Payee    ref.Ref      `bson:"payee" json:"payee"`   //收款人
-	Issue    ref.Ref      `bson:"issue" json:"issue"`   //关联事务
-	Amount   money.Amount `bson:"amount" json:"amount"` //总支付金额
-	JobArray []struct {
-		Channel capital.Channel `bson:"channel" json:"channel"` //渠道码
-		Amount  money.Amount    `bson:"amount" json:"amount"`   //金额
-	} `bson:"job_array" json:"job_array"` //执行子任务
+	Scope    ref.Scope    `bson:"scope" json:"scope"`         //所属业务域
+	Lead     ref.Lead     `bson:"lead" json:"lead"`           //业务对应领衔[唯一,所以无需单独幂等]
+	Payer    ref.Collar   `bson:"payer" json:"payer"`         //付款人
+	Payee    ref.Collar   `bson:"payee" json:"payee"`         //收款人
+	Issue    ref.Collar   `bson:"issue" json:"issue"`         //关联事务
+	Amount   money.Amount `bson:"amount" json:"amount"`       //总支付金额
+	JobArray []*JobDefine `bson:"job_array" json:"job_array"` //执行子任务
 
 	With *struct {
-		Initialized bool `bson:"initialized" json:"initialized"` //创建时初始化
+		Prepare bool `bson:"prepare" json:"prepare"` //创建时初始化
 	} `bson:"with" json:"with"` //携带动作
 }
 
 type GetRequest struct {
-	Scope     ref.Scope `bson:"scope" json:"scope"`           //[*]所属业务域
-	PaymentID ID        `bson:"payment_id" json:"payment_id"` //[id|lead]ID
-	Lead      *ref.Lead `bson:"lead" json:"lead"`             //[id|lead]业务对应领衔
+	Scope     ref.Scope   `bson:"scope" json:"scope"` //[*]所属业务域
+	By        load.ByCode `bson:"by" json:"by"`
+	PaymentID ID          `bson:"payment_id" json:"payment_id"` //[id|lead]ID
+	Lead      *ref.Lead   `bson:"lead" json:"lead"`             //[id|lead]业务对应领衔
 }
 
-type PrepareRequest GetRequest
+type PrepareRequest = GetRequest
 
-type CancelRequest GetRequest
+type CancelRequest = GetRequest
 
 // ConsultRequest 支付渠道咨询
-type ConsultRequest GetRequest
+type ConsultRequest = GetRequest
 
 type ConsultResponse struct {
 	Channel []struct {

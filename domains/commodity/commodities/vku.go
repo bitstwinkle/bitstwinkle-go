@@ -41,7 +41,7 @@ type Vku struct {
 	Volume         volume.Volume       `bson:"volume" json:"volume"`                   //销量信息
 	Price          money.Amount        `bson:"price" json:"price"`                     //指定的销售价
 	SuggestedPrice money.Amount        `bson:"suggested_price" json:"suggested_price"` //建议销售价
-	Ctrl           *ctrl.Ctrl          `bson:"ctrl" json:"ctrl"`                       //控制信息
+	Ctrl           *ctrl.Ctrl          `bson:"ctrl,omitempty" json:"ctrl,omitempty"`   //控制信息
 	Available      bool                `bson:"available" json:"available"`             //是否上架
 	BrithAt        time.Time           `bson:"brith_at" json:"brith_at"`               //创建时间
 	ModifiedAt     time.Time           `bson:"modified_at" json:"modified_at"`         //最后更新时间
@@ -52,7 +52,7 @@ type Vku struct {
 		SkuID sku.ID `bson:"sku_id" json:"sku_id"`
 		SpuID spu.ID `bson:"spu_id" json:"spu_id"`
 	} `bson:"related" json:"related"`
-	Template *Vpu `bson:"template" json:"template"` //VPU 信息
+	Template *Vpu `bson:"template,omitempty" json:"template,omitempty"` //VPU 信息
 }
 
 type VkuLoadRequest struct {

@@ -42,24 +42,24 @@ func VerifyArray[T ItemAble](arr []T, notEmpty ...bool) *errors.Error {
 	}
 	for _, item := range arr {
 		if err := item.Verify(); err != nil {
-			return err
+			return errors.Verify("invalid " + item.GetCode() + ": " + err.Error())
 		}
 	}
 	return nil
 }
 
 func MapOfArray[T ItemAble](arr []T) (map[string]T, *errors.Error) {
-	if len(arr) == 0 {
-		return map[string]T{}, nil
-	}
 	dict := make(map[string]T)
+	if len(arr) == 0 {
+		return dict, nil
+	}
 	for _, item := range arr {
 		if err := item.Verify(); err != nil {
-			return nil, err
+			return dict, err
 		}
 		_, ok := dict[item.GetCode()]
 		if ok {
-			return nil, errors.Assert("single "+item.GetCode(), "repetitive")
+			return dict, errors.Assert("single "+item.GetCode(), "repetitive")
 		}
 		dict[item.GetCode()] = item
 	}
