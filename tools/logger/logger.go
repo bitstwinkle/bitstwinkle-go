@@ -100,7 +100,11 @@ func GetLogger(key string) *zap.Logger {
 	atomicLevel.SetLevel(zapLogLevel)
 
 	writeSyncers := []zapcore.WriteSyncer{
-		zapcore.AddSync(&hook), zapcore.AddSync(os.Stdout),
+		zapcore.AddSync(&hook),
+	}
+
+	if !sys.RunMode.IsRd() {
+		writeSyncers = append(writeSyncers, zapcore.AddSync(os.Stdout))
 	}
 
 	core := zapcore.NewCore(
@@ -120,7 +124,9 @@ var Console *zap.Logger
 func init() {
 	Logger = GetLogger("commons")
 	Console = GetLogger("console")
-	sys.ConsoleToLogger(func(msg string) {
-		Console.Info(msg)
-	})
+	if !sys.RunMode.IsRd() {
+		sys.ConsoleToLogger(func(msg string) {
+			Console.Info(msg)
+		})
+	}
 }
