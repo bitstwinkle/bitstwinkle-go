@@ -26,6 +26,7 @@ import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 	"github.com/bitstwinkle/bitstwinkle-go/types/money"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
+	"github.com/bitstwinkle/bitstwinkle-go/types/ww"
 )
 
 // ID Payment ID
@@ -43,6 +44,7 @@ const (
 	Refunding       Status = "refunding"        //退款中
 	PartialRefunded Status = "partial_refunded" //部分退款
 	Refunded        Status = "refunded"         //全额退款
+	Ultimate        Status = "ultimate"         //终结态,不可做任何变更
 )
 
 type Job struct {
@@ -124,11 +126,19 @@ type RefundRequest struct {
 	} `bson:"jobs,omitempty" json:"jobs,omitempty"` //各子单分别退款金额
 }
 
+// UltimateRequest 终结确认
+type UltimateRequest struct {
+	Scope     ref.Scope `bson:"scope" json:"scope"`           //[*]所属业务域
+	PaymentID ID        `bson:"payment_id" json:"payment_id"` //[id|lead]ID
+	Lead      *ref.Lead `bson:"lead" json:"lead"`             //[id|lead]业务对应领衔
+}
+
 type Service interface {
-	Create(req CreateRequest) (*Payment, *errors.Error)
-	Get(req GetRequest) (*Payment, *errors.Error)
-	Prepare(req PrepareRequest) (*Payment, *errors.Error)
-	Cancel(req CreateRequest) (*Payment, *errors.Error)
-	Consult(req ConsultResponse) (*ConsultResponse, *errors.Error)
-	Refund(req RefundRequest) (*Payment, *errors.Error)
+	Create(permit *ww.Permit, req CreateRequest) (*Payment, *errors.Error)
+	Get(permit *ww.Permit, req GetRequest) (*Payment, *errors.Error)
+	Prepare(permit *ww.Permit, req PrepareRequest) (*Payment, *errors.Error)
+	Cancel(permit *ww.Permit, req CreateRequest) (*Payment, *errors.Error)
+	Consult(permit *ww.Permit, req ConsultResponse) (*ConsultResponse, *errors.Error)
+	Refund(permit *ww.Permit, req RefundRequest) (*Payment, *errors.Error)
+	Ultimate(permit *ww.Permit, req UltimateRequest) (ID, *errors.Error)
 }
