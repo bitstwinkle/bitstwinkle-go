@@ -103,7 +103,7 @@ func GetLogger(key string) *zap.Logger {
 		zapcore.AddSync(&hook),
 	}
 
-	if !sys.RunMode.IsRd() {
+	if sys.RunMode.IsRd() {
 		writeSyncers = append(writeSyncers, zapcore.AddSync(os.Stdout))
 	}
 

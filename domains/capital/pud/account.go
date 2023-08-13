@@ -61,21 +61,19 @@ type Account struct {
 }
 
 type AccountCreateRequest struct {
-	Scope    ref.Scope    `bson:"scope" json:"scope"`                   //SCOPE
-	Lead     ref.Lead     `bson:"lead" json:"lead"`                     //Lead
-	DollarID DollarID     `bson:"dollar_id" json:"dollar_id"`           //积分定义ID
-	Balance  money.Amount `bson:"balance" json:"balance"`               //余额
-	Tip      string       `bson:"tip" json:"tip"`                       //账户备注名
-	Options  *Options     `bson:"options" json:"options"`               //账户选项
-	Ctrl     *ctrl.Ctrl   `bson:"ctrl,omitempty" json:"ctrl,omitempty"` //控制信息
+	Scope      ref.Scope   `bson:"scope" json:"scope"`                                 //SCOPE
+	Lead       ref.Lead    `bson:"lead" json:"lead"`                                   //Lead
+	DollarID   DollarID    `bson:"dollar_id" json:"dollar_id"`                         //积分定义ID
+	DollarLead *DollarLead `bson:"dollar_lead,omitempty" json:"dollar_lead,omitempty"` //积分定义LEAD
+	Tip        string      `bson:"tip" json:"tip"`                                     //账户备注名
+	Options    *Options    `bson:"options" json:"options"`                             //账户选项
+	Ctrl       *ctrl.Ctrl  `bson:"ctrl,omitempty" json:"ctrl,omitempty"`               //控制信息
 }
 
 type AccountSetRequest struct {
-	Scope      ref.Scope `bson:"scope" json:"scope"` //SCOPE
-	AccountKey struct {
-		AccountID AccountID `bson:"account_id" json:"account_id"` //[id|key]所属账户ID
-		Lead      *ref.Lead `bson:"lead" json:"lead"`             //[id|key]所属账户lead
-	} `bson:"account_key" json:"account_key"`
+	Scope        ref.Scope        `bson:"scope" json:"scope"`                 //SCOPE
+	AccountID    AccountID        `bson:"account_id" json:"account_id"`       //[id|key]所属账户ID
+	Lead         *ref.Lead        `bson:"lead" json:"lead"`                   //[id|key]所属账户lead
 	TipSet       *ctrl.StringSet  `bson:"tip_set" json:"tip_set"`             //账户备注名
 	Options      *Options         `bson:"options" json:"options"`             //账户选项
 	CtrlSet      *ctrl.Set        `bson:"ctrl_set" json:"ctrl_set"`           //控制信息
@@ -91,26 +89,22 @@ type AccountGetRequest struct {
 
 // AirdropRequest 向账户充值, 从Dollar.balance 扣除
 type AirdropRequest struct {
-	Scope      ref.Scope `bson:"scope" json:"scope"` //[*]所属域
-	AccountKey struct {
-		AccountID AccountID `bson:"account_id" json:"account_id"` //[id|key]所属账户ID
-		Lead      *ref.Lead `bson:"lead" json:"lead"`             //[id|key]所属账户lead
-	} `bson:"account_key" json:"account_key"`
-	Amount money.Amount `bson:"amount" json:"amount"` //[*]注入金额
-	Issue  ref.Collar   `bson:"issue" json:"issue"`   //[*]对应事件
-	Memo   string       `bson:"memo" json:"memo"`     //[-]备注
+	Scope     ref.Scope    `bson:"scope" json:"scope"`                     //[*]所属域
+	AccountID AccountID    `bson:"account_id" json:"account_id"`           //[id|key]所属账户ID
+	Lead      *ref.Lead    `bson:"lead" json:"lead"`                       //[id|key]所属账户lead
+	Amount    money.Amount `bson:"amount" json:"amount"`                   //[*]注入金额
+	Issue     *ref.Collar  `bson:"issue,omitempty" json:"issue,omitempty"` //[*]对应事件
+	Memo      string       `bson:"memo,omitempty" json:"memo,omitempty"`   //[-]备注
 }
 
 // BuybackRequest 从账户提取, 向Dollar.balance 回收
 type BuybackRequest struct {
-	Scope      ref.Scope `bson:"scope" json:"scope"` //[*]所属域
-	AccountKey struct {
-		AccountID AccountID `bson:"account_id" json:"account_id"` //[id|key]所属账户ID
-		Lead      *ref.Lead `bson:"lead" json:"lead"`             //[id|key]所属账户lead
-	} `bson:"account_key" json:"account_key"`
-	Amount money.Amount `bson:"amount" json:"amount"` //[*]提取金额
-	Issue  ref.Collar   `bson:"issue" json:"issue"`   //[*]对应事件
-	Memo   string       `bson:"memo" json:"memo"`     //[-]备注
+	Scope     ref.Scope    `bson:"scope" json:"scope"`           //[*]所属域
+	AccountID AccountID    `bson:"account_id" json:"account_id"` //[id|key]所属账户ID
+	Lead      *ref.Lead    `bson:"lead" json:"lead"`             //[id|key]所属账户lead
+	Amount    money.Amount `bson:"amount" json:"amount"`         //[*]提取金额
+	Issue     *ref.Collar  `bson:"issue" json:"issue"`           //[*]对应事件
+	Memo      string       `bson:"memo" json:"memo"`             //[-]备注
 }
 
 type AccountLoadRequest struct {

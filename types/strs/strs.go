@@ -19,6 +19,7 @@ package strs
 import (
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -55,6 +56,10 @@ func KeyVerify(str string) bool {
 		return false
 	}
 	return match
+}
+
+func PureNameVerify(str string) bool {
+	return !strings.ContainsAny(str, " \t\n\r!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./")
 }
 
 // FBCut Intercept before and after, remaining specified length

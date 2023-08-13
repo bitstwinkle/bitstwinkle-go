@@ -16,10 +16,27 @@
 
  */
 
-package capital
+package more
 
-// Channel 资金通道
-type Channel = string
-
-// BatchID 批次号
-type BatchID = string
+// Mix 分析更改
+// *more.More: 新的More
+// bool: 是否有变化
+func Mix(moreM More, setM *Set) (More, bool) {
+	if setM == nil {
+		return moreM, false
+	}
+	if moreM == nil {
+		return OfArray(setM.Newest), true
+	}
+	newMore := NewMore()
+	setMore := OfArray(setM.Newest)
+	for k, v := range setMore {
+		newMore[k] = v
+	}
+	if len(setM.Removed) > 0 {
+		for _, k := range setM.Removed {
+			delete(newMore, k)
+		}
+	}
+	return newMore, true
+}

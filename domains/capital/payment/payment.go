@@ -46,13 +46,15 @@ const (
 )
 
 type Job struct {
-	JobID          string          `bson:"job_id" json:"job_id"`                     //支付子单
-	PayerAccountID account.ID      `bson:"payer_account_id" json:"payer_account_id"` //付款人账户ID
-	PayeeAccountID account.ID      `bson:"payee_account_id" json:"payee_account_id"` //收款人账户ID
-	Channel        capital.Channel `bson:"channel" json:"channel"`                   //渠道码
-	Amount         money.Amount    `bson:"amount" json:"amount"`                     //金额
-	Status         Status          `bson:"status" json:"status"`                     //执行状态
-	Result         more.More       `bson:"result,omitempty" json:"result,omitempty"` //最终结果
+	JobID            string          `bson:"job_id" json:"job_id,omitempty"`                                   //支付子单
+	PayerAccountID   account.ID      `bson:"payer_account_id" json:"payer_account_id,omitempty"`               //付款人账户ID
+	PayeeAccountID   account.ID      `bson:"payee_account_id" json:"payee_account_id,omitempty"`               //收款人账户ID
+	Channel          capital.Channel `bson:"channel" json:"channel"`                                           //渠道码
+	Amount           money.Amount    `bson:"amount" json:"amount"`                                             //金额
+	Status           Status          `bson:"status,omitempty" json:"status,omitempty"`                         //执行状态
+	Paras            more.More       `bson:"paras,omitempty" json:"paras,omitempty"`                           //最终结果
+	PayerAccountLead *ref.Lead       `bson:"payer_account_lead,omitempty" json:"payer_account_lead,omitempty"` //付款人账户
+	PayeeAccountLead *ref.Lead       `bson:"payee_account_lead,omitempty" json:"payee_account_lead,omitempty"` //收款人账户
 }
 
 type JobDefine struct {

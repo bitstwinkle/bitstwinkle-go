@@ -89,6 +89,17 @@ func (m More) ToArray() Array {
 }
 
 type Set struct {
-	Newest  Array    `json:"newest"`  //新增或更新
-	Removed []string `json:"removed"` //需要移除的
+	Yes     bool     `bson:"yes" json:"yes"`
+	Newest  Array    `bson:"newest" json:"newest"`   //新增或更新
+	Removed []string `bson:"removed" json:"removed"` //需要移除的
+}
+
+func (m *Set) Verify() *errors.Error {
+	if !m.Yes {
+		return nil
+	}
+	if err := collections.VerifyArray[Item](m.Newest); err != nil {
+		return err
+	}
+	return nil
 }

@@ -21,19 +21,53 @@ package pud
 import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/collections/more"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ctrl"
+	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/load"
 	"github.com/bitstwinkle/bitstwinkle-go/types/ref"
+	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
 	"github.com/bitstwinkle/bitstwinkle-go/types/view/media"
+	"regexp"
 	"time"
 )
 
 // DollarCode 积分编码| Scope 内唯一
 type DollarCode = string
 
+func DollarCodeVerify(dc string) *errors.Error {
+	match, err := regexp.MatchString("^[A-Z]{3,10}$", dc)
+	if err != nil {
+		return errors.Verify("DollarCode Verify Failed: " + err.Error())
+	}
+	if !match {
+		return errors.Verify("This is not a qualified DollarCode[3-10 capital letters]: " + dc)
+	}
+	return nil
+}
+
+func DollarNameVerify(name string) *errors.Error {
+	if len(name) < 3 || len(name) > 20 {
+		return errors.Verify("This is not a qualified Name[3-20 capital letters]: " + name)
+	}
+	if !strs.PureNameVerify(name) {
+		return errors.Verify("This is not a qualified Name[No Spaces or special characters]: " + name)
+	}
+	return nil
+}
+
 // DollarLead 通过发行方和Dollar 编码可以定位到一种积分
 type DollarLead struct {
 	Publisher ref.Collar `bson:"publisher" json:"publisher"` //发行方
 	Code      DollarCode `bson:"code" json:"code"`           //CODE
+}
+
+func (dl *DollarLead) Verify() *errors.Error {
+	if err := dl.Publisher.Verify(); err != nil {
+		return errors.Verify("invalid lead.publisher: " + err.Error())
+	}
+	if err := DollarCodeVerify(dl.Code); err != nil {
+		return errors.Verify("invalid lead.code: " + err.Error())
+	}
+	return nil
 }
 
 // DollarID 对应的ID
@@ -60,6 +94,7 @@ type DollarCreateRequest struct {
 	Scope     ref.Scope    `bson:"scope" json:"scope"`         //SCOPE
 	Publisher ref.Collar   `bson:"publisher" json:"publisher"` //发行方
 	Code      DollarCode   `bson:"code" json:"code"`           //CODE
+	Issuance  int64        `bson:"issuance" json:"issuance"`   //发行量
 	Name      string       `bson:"name" json:"name"`           //NAME
 	Info      *more.Input  `bson:"info" json:"info"`           //展示信息
 	Media     *media.Input `bson:"media" json:"media"`         //图文视频信息
