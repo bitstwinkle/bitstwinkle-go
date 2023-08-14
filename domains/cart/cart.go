@@ -47,7 +47,7 @@ type Cart struct {
 // PutRequest 向购物车放置商品
 type PutRequest struct {
 	Scope       ref.Scope         `bson:"scope" json:"scope"`               //[*]所属业务域
-	Lead        ref.Lead          `bson:"lead" json:"lead"`                 //[lead|id]业务领衔
+	Lead        *ref.Lead         `bson:"lead" json:"lead"`                 //[lead|id]业务领衔
 	ID          ID                `bson:"id" json:"id"`                     //[lead|id]唯一ID
 	CommodityID commodities.VkuID `bson:"commodity_id" json:"commodity_id"` //商品ID
 	Quantity    int32             `bson:"quantity" json:"quantity"`         //数量
@@ -58,16 +58,17 @@ type DeductRequest = PutRequest
 
 // SelectedSwitchRequest 切换选中
 type SelectedSwitchRequest struct {
-	Scope       ref.Scope         `bson:"scope" json:"scope"`               //[*]所属业务域
-	Lead        ref.Lead          `bson:"lead" json:"lead"`                 //[lead|id]业务领衔
-	ID          ID                `bson:"id" json:"id"`                     //[lead|id]唯一ID
-	CommodityID commodities.VkuID `bson:"commodity_id" json:"commodity_id"` //商品ID
+	Scope            ref.Scope           `bson:"scope" json:"scope"`                           //[*]所属业务域
+	Lead             *ref.Lead           `bson:"lead" json:"lead"`                             //[lead|id]业务领衔
+	ID               ID                  `bson:"id" json:"id"`                                 //[lead|id]唯一ID
+	CommodityIdArray []commodities.VkuID `bson:"commodity_id_array" json:"commodity_id_array"` //商品ID
+	Selected         bool                `bson:"selected" json:"selected"`
 }
 
 // GetRequest 获取购物车内容
 type GetRequest struct {
 	Scope ref.Scope `bson:"scope" json:"scope"` //[*]所属业务域
-	Lead  ref.Lead  `bson:"lead" json:"lead"`   //[lead|id]业务领衔
+	Lead  *ref.Lead `bson:"lead" json:"lead"`   //[lead|id]业务领衔
 	ID    ID        `bson:"id" json:"id"`       //[lead|id]唯一ID
 }
 

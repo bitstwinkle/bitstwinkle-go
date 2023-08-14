@@ -58,23 +58,14 @@ type Category struct {
 }
 
 type CreateRequest struct {
-	IdemID   string    `bson:"idem_id" json:"idem_id"`     //[*]幂等ID
-	Scope    ref.Scope `bson:"scope" json:"scope"`         //所属业务域
-	Lead     *ref.Lead `bson:"lead" json:"lead"`           //业务链接: 唯一
-	ParentID ID        `bson:"parent_id" json:"parent_id"` //父抽象类目ID,顶层使用$
-	Name     string    `bson:"name" json:"name"`           //类目名称
-	Info     *struct {
-		Alias string     `bson:"alias" json:"alias"` //[-]别名
-		Code  string     `bson:"code" json:"code"`   //[-]编码
-		More  more.Array `bson:"more" json:"more"`   //更多信息
-	} `bson:"info" json:"info"` //展示信息
-	Media *struct {
-		Logo    *media.Media `bson:"logo" json:"logo"`       //LOGO
-		Primary *media.Media `bson:"primary" json:"primary"` //主图视频
-		More    more.Array   `bson:"more" json:"more"`       //更多图视频
-	} `json:"media"` //图文视频
-	Ctrl *ctrl.Ctrl `bson:"ctrl" json:"ctrl"` //控制信息
-	Seq  int64      `bson:"seq" json:"seq"`   //在上级类目中的排序
+	Scope    ref.Scope    `bson:"scope" json:"scope"`         //所属业务域
+	Lead     ref.Lead     `bson:"lead" json:"lead"`           //业务链接: 唯一
+	ParentID ID           `bson:"parent_id" json:"parent_id"` //父抽象类目ID,顶层使用$
+	Name     string       `bson:"name" json:"name"`           //类目名称
+	Info     *more.Input  `bson:"info" json:"info"`           //展示信息
+	Media    *media.Input `bson:"media" json:"media"`         //图文视频
+	Ctrl     *ctrl.Ctrl   `bson:"ctrl" json:"ctrl"`           //控制信息
+	Seq      int64        `bson:"seq" json:"seq"`             //在上级类目中的排序
 }
 
 type SetRequest struct {
