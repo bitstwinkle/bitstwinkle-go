@@ -68,7 +68,7 @@ func doSignature(_ *resty.Client, request *http.Request) error {
 			}()
 		}
 	}
-	err := security.Signature(request, gToken.TokenPub, gToken.Token)
+	err := security.SecretSignature(request, gToken.TokenPub, gToken.Token)
 	if err != nil {
 		log.Println(err)
 		return err

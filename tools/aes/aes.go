@@ -32,18 +32,16 @@ import (
 // Encrypt 加密
 func Encrypt(content string, priKey []byte) (string, *errors.Error) {
 	plaintext := []byte(content)
-
 	block, err := aes.NewCipher(priKey)
 	if err != nil {
 		return strs.EMPTY, errors.Sys("aes.NewCipher([]byte(gAesKey)): " + err.Error())
 	}
-
 	padding := aes.BlockSize - len(plaintext)%aes.BlockSize
 	paddedPlaintext := append(plaintext, bytes.Repeat([]byte{byte(padding)}, padding)...)
 
 	iv := make([]byte, aes.BlockSize)
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		return strs.EMPTY, errors.Sys("init data failed: " + err.Error())
+		return strs.EMPTY, errors.Sys("init iv failed: " + err.Error())
 	}
 
 	ciphertext := make([]byte, aes.BlockSize+len(paddedPlaintext))
@@ -76,6 +74,7 @@ func Decrypt(content string, priKey []byte) (string, *errors.Error) {
 
 	// 去除填充数据
 	padding := int(decrypted[len(decrypted)-1])
+
 	decrypted = decrypted[:len(decrypted)-padding]
 
 	return string(decrypted), nil

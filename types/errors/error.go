@@ -27,7 +27,7 @@ const (
 )
 
 type Error struct {
-	Type    Type   `bson:"t" json:"t"`
+	Type    Type   `bson:"type" json:"type"`
 	Code    string `bson:"code"  json:"code"`
 	Message string `bson:"message" json:"message"`
 

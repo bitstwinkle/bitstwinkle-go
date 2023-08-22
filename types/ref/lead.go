@@ -17,9 +17,11 @@
 package ref
 
 import (
+	"encoding/base64"
 	"github.com/bitstwinkle/bitstwinkle-go/tools/unique"
 	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
+	"strings"
 )
 
 // Lead Business content link unique value
@@ -66,6 +68,26 @@ func (m Lead) Verify() *errors.Error {
 
 func (m Lead) String() string {
 	return m.Owner.String() + ":" + m.Code
+}
+
+func (m Lead) Unique() string {
+	uniStr := m.Owner.Unique() + ":" + m.Code
+	return base64.StdEncoding.EncodeToString([]byte(uniStr))
+}
+
+func LeadOf(uni string) Lead {
+	bData, err := base64.StdEncoding.DecodeString(uni)
+	if err != nil {
+		return Lead{}
+	}
+	arr := strings.Split(string(bData), ":")
+	if len(arr) != 2 {
+		return Lead{}
+	}
+	return Lead{
+		Owner: CollarOf(arr[0]),
+		Code:  arr[1],
+	}
 }
 
 func (m Lead) Same(other Lead) bool {

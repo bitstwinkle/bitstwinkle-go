@@ -20,11 +20,13 @@ package security
 
 import (
 	"fmt"
+	"github.com/bitstwinkle/bitstwinkle-go/tools/logger"
 	"github.com/bitstwinkle/bitstwinkle-go/tools/sign"
+	"github.com/bitstwinkle/bitstwinkle-go/tools/sys"
 	"github.com/bitstwinkle/bitstwinkle-go/tools/unique"
 	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
-	"io"
+	"go.uber.org/zap"
 	"net/http"
 	"net/url"
 	"sort"
@@ -46,18 +48,22 @@ const (
 	HeaderTimestamp   = HeaderPrefix + "Timestamp"  //Timestamp
 	HeaderSignature   = HeaderPrefix + "Signature"  //Signature
 	HeaderTokenExpire = HeaderPrefix + "Expiration" //Token Expiration
+
+	BodyInside       = "__b_o_d_y__"
+	TurnBySecretURL  = "/security/access/secret"
+	TurnByRefreshURL = "/security/access/refresh"
 )
 
-var signWithHeaderKey = []string{HeaderNonce, HeaderTimestamp, HeaderTokenPub}
+var signWithHeaderKey = []string{HeaderNonce, HeaderTimestamp}
 
-// Signature Sign in accordance with the agreement
-func Signature(req *http.Request, tokenPub string, tokenPri string) *errors.Error {
+// TokenSignature Sign in accordance with the agreement
+func TokenSignature(req *http.Request, bodyData []byte, tokenPub string, tokenPri string) *errors.Error {
 	nonce := unique.Rand()
 	timestamp := time.Now().Unix()
 	req.Header.Set(HeaderTokenPub, tokenPub)
 	req.Header.Set(HeaderNonce, nonce)
 	req.Header.Set(HeaderTimestamp, fmt.Sprintf("%d", timestamp))
-	signStr, err := GenSignature(req, tokenPri)
+	signStr, err := GenSignature(req, bodyData, tokenPri)
 	if err != nil {
 		return err
 	}
@@ -65,14 +71,14 @@ func Signature(req *http.Request, tokenPub string, tokenPri string) *errors.Erro
 	return nil
 }
 
-// TurnSignature Use signatures when exchanging protocols
-func TurnSignature(req *http.Request, secretPub string, secretPri string) *errors.Error {
+// SecretSignature Use signatures when exchanging protocols
+func SecretSignature(req *http.Request, bodyData []byte, secretPub string, secretPri string) *errors.Error {
 	nonce := unique.Rand()
 	timestamp := time.Now().Unix()
 	req.Header.Set(HeaderSecretPub, secretPub)
 	req.Header.Set(HeaderNonce, nonce)
 	req.Header.Set(HeaderTimestamp, fmt.Sprintf("%d", timestamp))
-	signStr, err := GenSignature(req, secretPri)
+	signStr, err := GenSignature(req, bodyData, secretPri)
 	if err != nil {
 		return err
 	}
@@ -81,18 +87,11 @@ func TurnSignature(req *http.Request, secretPub string, secretPri string) *error
 }
 
 // GenSignature Sign the request data
-func GenSignature(req *http.Request, priKey string) (string, *errors.Error) {
+func GenSignature(req *http.Request, bodyData []byte, priKey string) (string, *errors.Error) {
 	wrapper := make(map[string]string)
 
 	if len(req.URL.Query()) > 0 {
 		err := urlValuesToMap(req.URL.Query(), wrapper)
-		if err != nil {
-			return strs.EMPTY, err
-		}
-	}
-
-	if len(req.PostForm) == 0 {
-		err := urlValuesToMap(req.PostForm, wrapper)
 		if err != nil {
 			return strs.EMPTY, err
 		}
@@ -105,29 +104,39 @@ func GenSignature(req *http.Request, priKey string) (string, *errors.Error) {
 	sort.Strings(sortedKeys)
 
 	joinBuf := strings.Builder{}
+
+	for _, headerKey := range signWithHeaderKey {
+		_, _ = joinBuf.WriteString(headerKey + "=")
+		_, err := joinBuf.WriteString(req.Header.Get(headerKey))
+		if err != nil {
+			return strs.EMPTY, errors.Sys(err.Error(), err)
+		}
+		_, _ = joinBuf.WriteString(";")
+	}
+
 	for _, key := range sortedKeys {
+		_, _ = joinBuf.WriteString(key + "=")
 		_, err := joinBuf.WriteString(wrapper[key])
 		if err != nil {
 			return strs.EMPTY, errors.Sys(err.Error(), err)
 		}
+		_, _ = joinBuf.WriteString(";")
 	}
 
-	if req.Body != nil {
-		byteData, _ := io.ReadAll(req.Body)
-		_, err := joinBuf.Write(byteData)
-		if err != nil {
-			return strs.EMPTY, errors.Sys(err.Error(), err)
-		}
-	}
-
-	for _, headerKey := range signWithHeaderKey {
-		_, err := joinBuf.WriteString(req.Header.Get(headerKey))
+	if bodyData != nil && len(bodyData) > 0 {
+		_, _ = joinBuf.WriteString(BodyInside + "=")
+		_, err := joinBuf.Write(bodyData)
 		if err != nil {
 			return strs.EMPTY, errors.Sys(err.Error(), err)
 		}
 	}
 
 	joinStr := joinBuf.String()
+
+	if sys.RunMode.IsRd() {
+		logger.Logger.Info("joinStr is ", zap.String("joinStr", joinStr))
+	}
+
 	signStr, err := sign.Sign(joinStr, priKey)
 	if err != nil {
 		return strs.EMPTY, err

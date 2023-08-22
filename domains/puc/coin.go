@@ -16,7 +16,7 @@
  *
  */
 
-package coin
+package puc
 
 import (
 	"github.com/bitstwinkle/bitstwinkle-go/types/collections/more"

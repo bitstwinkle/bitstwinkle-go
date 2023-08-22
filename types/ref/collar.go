@@ -17,9 +17,11 @@
 package ref
 
 import (
+	"encoding/base64"
 	"fmt"
 	"github.com/bitstwinkle/bitstwinkle-go/types/errors"
 	"github.com/bitstwinkle/bitstwinkle-go/types/strs"
+	"strings"
 )
 
 type Collar struct {
@@ -55,6 +57,32 @@ func (c Collar) Verify(code ...string) *errors.Error {
 
 func (c Collar) String() string {
 	return c.Code + ":" + c.ID
+}
+
+func (c Collar) Unique() string {
+	uniStr := c.Code + ":" + c.ID
+	return base64.StdEncoding.EncodeToString([]byte(uniStr))
+}
+
+func CollarOf(uni string) Collar {
+	bData, err := base64.StdEncoding.DecodeString(uni)
+	if err != nil {
+		return Collar{
+			Code: strs.EMPTY,
+			ID:   strs.EMPTY,
+		}
+	}
+	arr := strings.Split(string(bData), ":")
+	if len(arr) != 2 {
+		return Collar{
+			Code: strs.EMPTY,
+			ID:   strs.EMPTY,
+		}
+	}
+	return Collar{
+		Code: arr[0],
+		ID:   arr[1],
+	}
 }
 
 func (c Collar) Same(other Collar) bool {
