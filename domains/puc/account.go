@@ -42,8 +42,27 @@ type Transfer struct {
 }
 
 type AccLoadTransferRequest struct {
+	Scope     ref.Scope   `bson:"scope" json:"scope"` //[*]所属域
 	LeadArray []*ref.Lead `bson:"lead_array" json:"lead_array"`
 	Page      *load.Page  `bson:"page" json:"page"`
+}
+
+type AirdropRequest struct {
+	Scope  ref.Scope    `bson:"scope" json:"scope"`                     //[*]所属域
+	Lead   ref.Lead     `bson:"lead" json:"lead"`                       //[id|key]所属账户lead
+	Amount money.Amount `bson:"amount" json:"amount"`                   //[*]注入金额
+	Issue  ref.Collar   `bson:"issue,omitempty" json:"issue,omitempty"` //[*]对应事件
+	Memo   string       `bson:"memo,omitempty" json:"memo,omitempty"`   //[-]备注
+}
+
+type AccGetRequest struct {
+	Scope         ref.Scope `bson:"scope" json:"scope"` //[*]所属域
+	AccountUnique Unique    `bson:"account_unique" json:"account_unique"`
+	With          *struct {
+		PrivateKey bool `bson:"private_key" json:"private_key"`
+		PublicKey  bool `bson:"public_key" json:"public_key"`
+		Mnemonic   bool `bson:"mnemonic" json:"mnemonic"`
+	} `bson:"with" json:"with"`
 }
 
 //

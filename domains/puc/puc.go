@@ -33,4 +33,6 @@ type Service interface {
 	WalletGet(req WalletGetRequest) (*Wallet, *errors.Error)
 	WalletLoadAccount(req WalletLoadAccRequest) ([]*Account, *errors.Error)
 	AccLoadTransfer(req AccLoadTransferRequest) ([]*Transfer, *load.Paging, *errors.Error)
+	Airdrop(req AirdropRequest) (transferID string, err *errors.Error)
+	AccGet(req AccGetRequest) (*Account, *errors.Error)
 }

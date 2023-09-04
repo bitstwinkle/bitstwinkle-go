@@ -51,19 +51,22 @@ type Wallet struct {
 }
 
 type WalletPreCreateRequest struct {
-	Lead ref.Lead `bson:"lead" json:"lead"`
+	Scope ref.Scope `bson:"scope" json:"scope"` //[*]所属域
+	Lead  ref.Lead  `bson:"lead" json:"lead"`
 }
 
 type WalletPreCreateResponse struct {
-	Unique     Unique `bson:"unique" json:"unique"`
-	PublicKey  string `bson:"public_key" json:"public_key"`
-	Mnemonic   string `bson:"mnemonic" json:"mnemonic"`
-	PrivateKey string `bson:"private_key" json:"private_key"`
+	Scope      ref.Scope `bson:"scope" json:"scope"` //[*]所属域
+	Unique     Unique    `bson:"unique" json:"unique"`
+	PublicKey  string    `bson:"public_key" json:"public_key"`
+	Mnemonic   string    `bson:"mnemonic" json:"mnemonic"`
+	PrivateKey string    `bson:"private_key" json:"private_key"`
 }
 
 type WalletMnemonicCheckRequest struct {
-	Lead     ref.Lead `bson:"lead" json:"lead"`
-	Mnemonic string   `bson:"mnemonic" json:"mnemonic"`
+	Scope    ref.Scope `bson:"scope" json:"scope"` //[*]所属域
+	Lead     ref.Lead  `bson:"lead" json:"lead"`
+	Mnemonic string    `bson:"mnemonic" json:"mnemonic"`
 }
 
 type WalletMnemonicCheckResponse struct {
@@ -71,28 +74,33 @@ type WalletMnemonicCheckResponse struct {
 }
 
 type WalletCreateConfirmRequest struct {
-	Lead ref.Lead `bson:"lead" json:"lead"`
+	Scope ref.Scope `bson:"scope" json:"scope"` //[*]所属域
+	Lead  ref.Lead  `bson:"lead" json:"lead"`
 }
 
 type WalletAddAccRequest struct {
-	WalletUnique Unique `bson:"wallet_unique" json:"wallet_unique"`
-	Name         string `bson:"name" json:"name"`
-	Coin         Coin   `bson:"coin" json:"coin"`
+	Scope        ref.Scope `bson:"scope" json:"scope"` //[*]所属域
+	WalletUnique Unique    `bson:"wallet_unique" json:"wallet_unique"`
+	Name         string    `bson:"name" json:"name"`
+	Coin         Coin      `bson:"coin" json:"coin"`
 }
 
 // WalletImportAccRequest todo
 type WalletImportAccRequest struct {
-	WalletUnique Unique `bson:"wallet_unique" json:"wallet_unique"`
-	Coin         Coin   `bson:"coin" json:"coin"`
+	Scope        ref.Scope `bson:"scope" json:"scope"` //[*]所属域
+	WalletUnique Unique    `bson:"wallet_unique" json:"wallet_unique"`
+	Coin         Coin      `bson:"coin" json:"coin"`
 }
 
 type WalletGetRequest struct {
-	WalletUnique Unique `bson:"wallet_unique" json:"wallet_unique"`
+	Scope        ref.Scope `bson:"scope" json:"scope"` //[*]所属域
+	WalletUnique Unique    `bson:"wallet_unique" json:"wallet_unique"`
 	With         *struct {
 		Account bool `bson:"account" json:"account"`
 	} `bson:"with" json:"with"`
 }
 
 type WalletLoadAccRequest struct {
-	WalletUnique Unique `bson:"wallet_unique" json:"wallet_unique"`
+	Scope        ref.Scope `bson:"scope" json:"scope"` //[*]所属域
+	WalletUnique Unique    `bson:"wallet_unique" json:"wallet_unique"`
 }
