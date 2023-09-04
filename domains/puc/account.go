@@ -25,14 +25,13 @@ import (
 )
 
 type Account struct {
-	Lead    ref.Lead     `bson:"lead" json:"lead"`
-	Addr    Addr         `bson:"addr" json:"addr"`
-	Coin    Coin         `bson:"coin" json:"coin"`
-	Balance money.Amount `bson:"balance" json:"balance"`
-	//PublicKey  string       `bson:"public_key" json:"public_key"`
-	//Mnemonic   string       `bson:"mnemonic" json:"mnemonic"`
-	//PrivateKey string       `bson:"private_key" json:"private_key"`
-	//BirthAt    time.Time    `bson:"birth_at" json:"birth_at"`
+	Lead       ref.Lead     `bson:"lead" json:"lead"`
+	Addr       Addr         `bson:"addr" json:"addr"`
+	Coin       Coin         `bson:"coin" json:"coin"`
+	Balance    money.Amount `bson:"balance" json:"balance"`
+	PublicKey  string       `bson:"public_key" json:"public_key"`
+	Mnemonic   string       `bson:"mnemonic" json:"mnemonic"`
+	PrivateKey string       `bson:"private_key" json:"private_key"`
 }
 
 type Transfer struct {
